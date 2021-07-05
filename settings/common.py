@@ -24,20 +24,27 @@ ALLOWED_HOSTS = ['dangerousmonk.hopto.org', '130.193.52.60']
 
 
 # Application definition
-
-INSTALLED_APPS = [
+DJANGO_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+]
 
-    'rest_framework',
-    'djoser',
-
+PROJECT_APPS = [
     'foodgram.users',
 ]
+
+THIRD_PARTY_APPS = [
+    'rest_framework',
+    'djoser',
+]
+
+
+INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS + THIRD_PARTY_APPS
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -54,7 +61,7 @@ ROOT_URLCONF = 'foodgram.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'frontend/build')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -85,6 +92,7 @@ DATABASES = {
 }
 
 AUTH_USER_MODEL = 'users.User'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 
 # Password validation
@@ -128,7 +136,8 @@ DJOSER = {
     'PASSWORD_RESET_CONFIRM_URL': 'users/set_password/{uid}/{token}',
     'SEND_ACTIVATION_EMAIL': True,
     'SEND_CONFIRMATION_EMAIL': True,
-    'ACTIVATION_URL': 'activate/{uid}/{token}'
+    'ACTIVATION_URL': 'activate/{uid}/{token}',
+    #'SERIALIZERS': {'user_create': 'foodgram.users.serializers.CustomUserCreateSerializer'},
 }
 
 # Internationalization

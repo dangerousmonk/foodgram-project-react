@@ -19,6 +19,7 @@ from django.urls import re_path
 from rest_framework_simplejwt import views
 
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('auth/', include('djoser.urls')),
