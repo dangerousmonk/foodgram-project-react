@@ -22,7 +22,6 @@ DEBUG = env.bool('DEBUG', False)
 
 ALLOWED_HOSTS = ['dangerousmonk.hopto.org', '130.193.52.60']
 
-
 # Application definition
 DJANGO_APPS = [
     'django.contrib.admin',
@@ -43,8 +42,11 @@ THIRD_PARTY_APPS = [
 ]
 
 
-INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS + THIRD_PARTY_APPS
+def base_dir_join(*args):
+    return os.path.join(BASE_DIR, *args)
 
+
+INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS + THIRD_PARTY_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -61,7 +63,7 @@ ROOT_URLCONF = 'foodgram.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'frontend/build')],
+        'DIRS': [os.path.join(BASE_DIR, 'frontend')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -75,7 +77,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'foodgram.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
@@ -93,7 +94,7 @@ DATABASES = {
 
 AUTH_USER_MODEL = 'users.User'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-
+STATICFILES_DIRS = (base_dir_join("./frontend/build/static"),)
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -120,16 +121,16 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
-    #'DEFAULT_FILTER_BACKENDS': [
+    # 'DEFAULT_FILTER_BACKENDS': [
     #    'django_filters.rest_framework.DjangoFilterBackend',
-    #],
-    #'DEFAULT_PAGINATION_CLASS':
+    # ],
+    # 'DEFAULT_PAGINATION_CLASS':
     #    'rest_framework.pagination.PageNumberPagination',
 }
 
 SIMPLE_JWT = {
-   'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
-   'AUTH_HEADER_TYPES': ('Bearer',),
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
+    'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
 DJOSER = {
@@ -137,7 +138,11 @@ DJOSER = {
     'SEND_ACTIVATION_EMAIL': True,
     'SEND_CONFIRMATION_EMAIL': True,
     'ACTIVATION_URL': 'activate/{uid}/{token}',
-    #'SERIALIZERS': {'user_create': 'foodgram.users.serializers.CustomUserCreateSerializer'},
+    'HIDE_USERS': False,
+    'PERMISSIONS':
+        {'user': ['djoser.permissions.CurrentUserOrAdminOrReadOnly'],
+         'user_list': ['djoser.permissions.CurrentUserOrAdminOrReadOnly']},
+    # 'SERIALIZERS': {'user_create': 'foodgram.users.serializers.CustomUserCreateSerializer'},
 }
 
 # Internationalization
@@ -153,12 +158,10 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
-
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

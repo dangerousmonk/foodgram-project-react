@@ -14,15 +14,16 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path,include
+from django.urls import path, include
 from django.urls import re_path
-from rest_framework_simplejwt import views
+from rest_framework_simplejwt import views as jwtviews
 
-
+from foodgram.users import views
 
 urlpatterns = [
+    path('', views.IndexView.as_view(), name='index'),
     path('admin/', admin.site.urls),
-    path('auth/', include('djoser.urls')),
-    re_path(r'auth/token/login/?', views.TokenObtainPairView.as_view(), name='jwt-create'),
-    re_path(r'auth/token/logout/?', views.TokenRefreshView.as_view(), name='jwt-refresh'),
+    path('api/', include('djoser.urls')),
+    re_path(r'api/auth/token/login/?', jwtviews.TokenObtainPairView.as_view(), name='jwt-create'),
+    re_path(r'api/auth/token/logout/?', views.TokenRefreshView.as_view(), name='jwt-refresh'),
 ]
