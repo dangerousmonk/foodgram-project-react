@@ -15,15 +15,16 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from django.urls import re_path
-from rest_framework_simplejwt import views as jwtviews
+from djoser import views as djoser_views
 
 from foodgram.users import views
+from foodgram.recipes.routers import v1_router
 
 urlpatterns = [
     path('', views.IndexView.as_view(), name='index'),
     path('admin/', admin.site.urls),
+    path('api/', include(v1_router.urls)),
     path('api/', include('djoser.urls')),
-    re_path(r'api/auth/token/login/?', jwtviews.TokenObtainPairView.as_view(), name='jwt-create'),
-    re_path(r'api/auth/token/logout/?', views.TokenRefreshView.as_view(), name='jwt-refresh'),
+    path('api/auth/token/login/', djoser_views.TokenCreateView.as_view(), name="login"),
+    path('api/auth/token/logout/', djoser_views.TokenDestroyView.as_view(), name="login"),
 ]

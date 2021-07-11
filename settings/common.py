@@ -34,10 +34,12 @@ DJANGO_APPS = [
 
 PROJECT_APPS = [
     'foodgram.users',
+    'foodgram.recipes',
 ]
 
 THIRD_PARTY_APPS = [
     'rest_framework',
+    'rest_framework.authtoken',
     'djoser',
 ]
 
@@ -119,7 +121,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.AllowAny',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    'rest_framework.authentication.TokenAuthentication'
     ],
     # 'DEFAULT_FILTER_BACKENDS': [
     #    'django_filters.rest_framework.DjangoFilterBackend',
@@ -130,7 +132,7 @@ REST_FRAMEWORK = {
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
-    'AUTH_HEADER_TYPES': ('Bearer',),
+    'AUTH_HEADER_TYPES': ('Token',),
 }
 
 DJOSER = {

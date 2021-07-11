@@ -6,24 +6,25 @@ from django.utils.translation import gettext_lazy as _
 
 class User(AbstractUser):
     email = models.EmailField(
-        _('email address'),
         unique=True,
         blank=False,
         null=False,
+        verbose_name=_('email address')
     )
     first_name = models.CharField(
-        _('name'),
         max_length=150,
         blank=False,
         null=False,
+        verbose_name=_('first name')
     )
     last_name = models.CharField(
-        _('surname'),
         max_length=150,
         blank=False,
         null=False,
+        verbose_name=_('last name'),
     )
-    REQUIRED_FIELDS = ['email', 'first_name', 'last_name']
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
 
     class Meta:
         verbose_name = _('User')
@@ -37,12 +38,12 @@ class User(AbstractUser):
 class UserSubscription(models.Model):
     subscriber = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        related_name='subscribers',
+        related_name='subscriptions',
         on_delete=models.CASCADE
     )
     subscription = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        related_name='subscriptions',
+        related_name='subscribers',
         on_delete=models.CASCADE
     )
     subscribed_at = models.DateTimeField(
