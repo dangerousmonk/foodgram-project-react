@@ -1,7 +1,8 @@
 from rest_framework import serializers
 
 from foodgram.users.serializers import UserSerializer
-from .models import Tag, Recipe, Ingredient, IngredientAmount
+from .models import Tag, Recipe, IngredientAmount, Favourites
+from foodgram.ingredients.models import Ingredient
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -14,12 +15,12 @@ class IngredientSerializer(serializers.ModelSerializer):
     amount = serializers.SerializerMethodField('get_amount')
     measurement_unit = serializers.CharField(source='measurement_unit.name')
 
-    def get_amount(self,obj):
+    def get_amount(self, obj):
         return IngredientAmount.objects.get(ingredient=obj).amount
 
     class Meta:
         model = Ingredient
-        fields = ['id', 'name', 'measurement_unit','amount']
+        fields = ['id', 'name', 'measurement_unit', 'amount']
 
 
 class IngredientAmountSerializer(serializers.ModelSerializer):
@@ -30,11 +31,12 @@ class IngredientAmountSerializer(serializers.ModelSerializer):
         fields = ['id', 'ingredient', 'amount']
 
 
-class RecipeSerializer(serializers.ModelSerializer):
+class RecipeReadSerializer(serializers.ModelSerializer):
     author = UserSerializer()
     tags = TagSerializer(many=True)
     ingredients = IngredientSerializer(many=True)
     text = serializers.CharField(source='description')
+    is_favorited = serializers.SerializerMethodField()
 
     class Meta:
         model = Recipe
@@ -43,13 +45,28 @@ class RecipeSerializer(serializers.ModelSerializer):
             'tags',
             'author',
             'ingredients',
+            'is_favorited',
             'name',
             'image',
             'text',
             'cooking_time',
         ]
 
+    def get_is_favorited(self, obj):
+        user = self.context['request'].user
+        if user.is_anonymous:
+            return False
+        return Favourites.objects.filter(user=user, recipe=obj).exists()
+
     '''def create(self, validated_data):
         recipe = Recipe.objects.create(**validated_data.get('recipe'))
         ingredients = validated_data.pop('')'''
+
+
+class RecipeWriteSerializer(serializers.ModelSerializer):
+
+
+    class Meta:
+        model = Recipe
+        exclude = ['image']
 

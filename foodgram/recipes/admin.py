@@ -1,22 +1,16 @@
 from django.contrib import admin
-from .models import Recipe, Tag, Ingredient, MeasurementUnit, IngredientAmount
+from . import models
 
-admin.site.register(Tag)
-
-admin.site.register(IngredientAmount)
-admin.site.register(MeasurementUnit)
+admin.site.register(models.Tag)
+admin.site.register(models.IngredientAmount)
+admin.site.register(models.Favourites)
 
 
 class IngredientAmountInline(admin.TabularInline):
-    model = IngredientAmount
+    model = models.IngredientAmount
     extra = 1
 
 
-@admin.register(Recipe)
-class RecipeAdmin(admin.ModelAdmin):
-    inlines = [IngredientAmountInline]
-
-
-@admin.register(Ingredient)
+@admin.register(models.Recipe)
 class RecipeAdmin(admin.ModelAdmin):
     inlines = [IngredientAmountInline]

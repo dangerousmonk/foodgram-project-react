@@ -6,60 +6,6 @@ from django.utils.translation import gettext_lazy as _
 from .utils import unique_slugify
 
 
-class MeasurementUnit(models.Model):
-    class Metrics(models.TextChoices):
-        mass = _('mass'), _('mass')
-        volume = _('volume'), _('volume')
-        quantity = _('quantity'), _('quantity')
-
-    name = models.CharField(
-        max_length=255,
-        blank=False,
-        null=False,
-        verbose_name=_('name'),
-    )
-    metric = models.CharField(
-        max_length=255,
-        blank=False,
-        null=False,
-        choices=Metrics.choices,
-        verbose_name=_('metric'),
-    )
-
-    class Meta:
-        verbose_name = _('Measurement unit')
-        verbose_name_plural = _('Measurement units')
-        ordering = ['metric', 'name']
-        unique_together = ['name', 'metric']
-
-    def __str__(self):
-        return self.name
-
-
-class Ingredient(models.Model):
-    name = models.CharField(
-        max_length=255,
-        blank=False,
-        null=False,
-        verbose_name=_('name'),
-    )
-    measurement_unit = models.ForeignKey(
-        'MeasurementUnit',
-        related_name='ingredients',
-        on_delete=models.CASCADE,
-        verbose_name=_('ingredients'),
-    )
-
-    class Meta:
-        verbose_name = _('Ingredient')
-        verbose_name_plural = _('Ingredients')
-        ordering = ['measurement_unit', 'name']
-        unique_together = ['name', 'measurement_unit']
-
-    def __str__(self):
-        return self.name
-
-
 class Tag(models.Model):
     # TODO: unique name
     name = models.CharField(
@@ -104,8 +50,7 @@ class Recipe(models.Model):
         related_name='recipes',
         on_delete=models.SET_NULL,
         null=True,
-        verbose_name=_('recipe author')
-        # TODO : keep recipes
+        verbose_name=_('author'),
     )
     name = models.CharField(
         max_length=255,
@@ -132,7 +77,7 @@ class Recipe(models.Model):
         verbose_name=_('tags'),
     )
     ingredients = models.ManyToManyField(
-        'Ingredient',
+        'ingredients.Ingredient',
         related_name='recipes',
         through='IngredientAmount',
         verbose_name=_('ingredients'),
@@ -144,6 +89,14 @@ class Recipe(models.Model):
         verbose_name=_('cooking time'),
     )
 
+    class Meta:
+        verbose_name = _('Recipe')
+        verbose_name_plural = _('Recipes')
+        ordering = ['id']
+
+    def __str__(self):
+        return self.name
+
 
 class IngredientAmount(models.Model):
     recipe = models.ForeignKey(
@@ -153,7 +106,7 @@ class IngredientAmount(models.Model):
         verbose_name=_('recipe')
     )
     ingredient = models.ForeignKey(
-        'Ingredient',
+        'ingredients.Ingredient',
         related_name='ingredient_amounts',
         on_delete=models.SET_NULL,
         null=True,
@@ -170,3 +123,35 @@ class IngredientAmount(models.Model):
         verbose_name = _('Ingredient amount')
         verbose_name_plural = _('Ingredient amounts')
         ordering = ['id']
+
+
+class Favourites(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name='favourite_recipes',
+        on_delete=models.CASCADE,
+        verbose_name=_('user'),
+    )
+    recipe = models.ForeignKey(
+        'Recipe',
+        related_name='in_favourites',
+        on_delete=models.CASCADE,
+        verbose_name=_('recipe'),
+    )
+    added_at = models.DateTimeField(
+        null=False,
+        blank=False,
+        auto_now_add=True,
+        verbose_name=_('added at')
+    )
+
+    class Meta:
+        verbose_name = _('Favourites')
+        verbose_name_plural = _('Favourites')
+        ordering = ['-added_at', 'id']
+        unique_together = ['user', 'recipe']
+
+    def __str__(self):
+        return f'{self.user.username} - {self.recipe.name}'
+
+
