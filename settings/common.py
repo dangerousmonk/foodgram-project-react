@@ -35,6 +35,7 @@ DJANGO_APPS = [
 PROJECT_APPS = [
     'foodgram.users',
     'foodgram.recipes',
+    'foodgram.ingredients',
 ]
 
 THIRD_PARTY_APPS = [
@@ -126,8 +127,9 @@ REST_FRAMEWORK = {
     # 'DEFAULT_FILTER_BACKENDS': [
     #    'django_filters.rest_framework.DjangoFilterBackend',
     # ],
-    # 'DEFAULT_PAGINATION_CLASS':
-    #    'rest_framework.pagination.PageNumberPagination',
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 6,
+
 }
 
 SIMPLE_JWT = {
@@ -140,7 +142,7 @@ DJOSER = {
     'SEND_ACTIVATION_EMAIL': True,
     'SEND_CONFIRMATION_EMAIL': True,
     'ACTIVATION_URL': 'activate/{uid}/{token}',
-    'HIDE_USERS': False,
+    #'HIDE_USERS': False,
     'PERMISSIONS':
         {'user': ['djoser.permissions.CurrentUserOrAdminOrReadOnly'],
          'user_list': ['djoser.permissions.CurrentUserOrAdminOrReadOnly']},
@@ -164,6 +166,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
