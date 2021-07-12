@@ -12,15 +12,15 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class IngredientSerializer(serializers.ModelSerializer):
-    amount = serializers.SerializerMethodField('get_amount')
+    # amount = serializers.SerializerMethodField('get_amount')
     measurement_unit = serializers.CharField(source='measurement_unit.name')
 
-    def get_amount(self, obj):
-        return IngredientAmount.objects.get(ingredient=obj).amount
+    '''def get_amount(self, obj):
+        return IngredientAmount.objects.get(ingredient=obj).amount'''
 
     class Meta:
         model = Ingredient
-        fields = ['id', 'name', 'measurement_unit', 'amount']
+        fields = ['id', 'name', 'measurement_unit']
 
 
 class IngredientAmountSerializer(serializers.ModelSerializer):
@@ -63,10 +63,21 @@ class RecipeReadSerializer(serializers.ModelSerializer):
         ingredients = validated_data.pop('')'''
 
 
-class RecipeWriteSerializer(serializers.ModelSerializer):
+class IngredientWriteSerializer(serializers.ModelSerializer):
+    amount_custom = serializers.IntegerField(write_only=True)
 
+    class Meta:
+        model = Ingredient
+        fields = [
+            'id',
+            'amount_custom'
+        ]
+
+
+class RecipeWriteSerializer(serializers.ModelSerializer):
+    tags = serializers.PrimaryKeyRelatedField(many=True, queryset=Tag.objects.all())
+    ingredients = IngredientWriteSerializer(many=True)
 
     class Meta:
         model = Recipe
         exclude = ['image']
-
