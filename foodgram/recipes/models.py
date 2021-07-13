@@ -88,11 +88,18 @@ class Recipe(models.Model):
         validators=[MinValueValidator(1)],
         verbose_name=_('cooking time'),
     )
+    created_date = models.DateTimeField(
+        null=False,
+        blank=False,
+        auto_now_add=True,
+        verbose_name=_('created date'),
+         )
 
     class Meta:
         verbose_name = _('Recipe')
         verbose_name_plural = _('Recipes')
-        ordering = ['id']
+        ordering = ['created_date']
+        unique_together = ['author', 'name']
 
     def __str__(self):
         return self.name
@@ -123,6 +130,10 @@ class IngredientAmount(models.Model):
         verbose_name = _('Ingredient amount')
         verbose_name_plural = _('Ingredient amounts')
         ordering = ['id']
+        #unique_together = ['recipe', 'ingredient']
+
+    def __str__(self):
+        return f'{self.recipe.name} - {self.ingredient.name}'
 
 
 class Favourites(models.Model):

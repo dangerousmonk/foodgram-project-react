@@ -25,11 +25,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
             return RecipeWriteSerializer
         return RecipeReadSerializer
 
-    def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
+
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
+        #serializer.is_valid(raise_exception=True)
         serializer.is_valid(raise_exception=True)
         data = request.data
 
@@ -45,9 +45,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
             new_recipe.tags.add(tag_object)
         for ingredient in data['ingredients']:
             ingredient_object = Ingredient.objects.get(id=ingredient['id'])
-            # new_recipe.ingredients.add(ingredient_object)
-            IngredientAmount.objects.create(recipe=new_recipe, ingredient=ingredient_object,
-                                            amount=ingredient['amount_custom'])
+            new_recipe.ingredients.add(ingredient_object, through_defaults={'amount':ingredient['amount_custom']})
+            #IngredientAmount.objects.create(recipe=new_recipe, ingredient=ingredient_object,
+            #                                amount=ingredient['amount_custom'])
         new_recipe.save()
         serializer = RecipeWriteSerializer(new_recipe)
         return Response(serializer.data)
