@@ -29,14 +29,13 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
-        #serializer.is_valid(raise_exception=True)
         serializer.is_valid(raise_exception=True)
         data = request.data
 
         new_recipe = Recipe.objects.create(
             author=self.request.user,
             name=data['name'],
-            # image=data['image'],
+            image=data['image'],
             description=data['description'],
             cooking_time=data['cooking_time']
         )
@@ -46,13 +45,13 @@ class RecipeViewSet(viewsets.ModelViewSet):
         for ingredient in data['ingredients']:
             ingredient_object = Ingredient.objects.get(id=ingredient['id'])
             new_recipe.ingredients.add(ingredient_object, through_defaults={'amount':ingredient['amount_custom']})
-            #IngredientAmount.objects.create(recipe=new_recipe, ingredient=ingredient_object,
-            #                                amount=ingredient['amount_custom'])
         new_recipe.save()
-        serializer = RecipeWriteSerializer(new_recipe)
+        serializer = RecipeReadSerializer(new_recipe, context={"request": request})
         return Response(serializer.data)
 
 
 class IngredientAmountViewSet(viewsets.ModelViewSet):
     queryset = IngredientAmount.objects.all()
     serializer_class = IngredientAmountSerializer
+
+

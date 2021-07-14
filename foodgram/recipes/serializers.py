@@ -36,7 +36,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True)
     ingredients = IngredientSerializer(many=True)
     text = serializers.CharField(source='description')
-    is_favorited = serializers.SerializerMethodField()
+    is_favorited = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Recipe
@@ -58,9 +58,6 @@ class RecipeReadSerializer(serializers.ModelSerializer):
             return False
         return Favourites.objects.filter(user=user, recipe=obj).exists()
 
-    '''def create(self, validated_data):
-        recipe = Recipe.objects.create(**validated_data.get('recipe'))
-        ingredients = validated_data.pop('')'''
 
 
 class IngredientWriteSerializer(serializers.ModelSerializer):
@@ -80,6 +77,11 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
     author = serializers.PrimaryKeyRelatedField(read_only=True, default=serializers.CurrentUserDefault())
 
 
+    def to_representation(self, instance):
+        serializer_data = RecipeReadSerializer(instance).data
+        return serializer_data
+
+
     class Meta:
         model = Recipe
-        exclude = ['image']
+        fields = '__all__'
