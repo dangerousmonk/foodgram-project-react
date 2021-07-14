@@ -1,9 +1,11 @@
 from rest_framework import viewsets
 from rest_framework import mixins
 from rest_framework.response import Response
+from rest_framework.decorators import action
+from rest_framework import status
 
-from .models import Tag, Recipe, IngredientAmount
-from .serializers import TagSerializer, RecipeReadSerializer, IngredientAmountSerializer, RecipeWriteSerializer
+from .models import Tag, Recipe, IngredientAmount, Favourites
+from .serializers import TagSerializer, RecipeReadSerializer, IngredientAmountSerializer, RecipeWriteSerializer, FavouritesSerializer
 from foodgram.ingredients.models import Ingredient
 
 
@@ -25,29 +27,19 @@ class RecipeViewSet(viewsets.ModelViewSet):
             return RecipeWriteSerializer
         return RecipeReadSerializer
 
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
 
+    @action(detail=True, methods=['get'])
+    def favorite(self, request, pk=None):
+        user = self.request.user
+        recipe = self.get_object()
+        Favourites.objects.create(user=user, recipe=recipe)
+        return Response({'status': 'Рецепт успешно добавлен в избранное'})
+        #else:
+        #return Response(serializer.errors,
+        #                    status=status.HTTP_400_BAD_REQUEST)
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        data = request.data
-
-        new_recipe = Recipe.objects.create(
-            author=self.request.user,
-            name=data['name'],
-            image=data['image'],
-            description=data['description'],
-            cooking_time=data['cooking_time']
-        )
-        for tag in data['tags']:
-            tag_object = Tag.objects.get(id=tag)
-            new_recipe.tags.add(tag_object)
-        for ingredient in data['ingredients']:
-            ingredient_object = Ingredient.objects.get(id=ingredient['id'])
-            new_recipe.ingredients.add(ingredient_object, through_defaults={'amount':ingredient['amount_custom']})
-        new_recipe.save()
-        serializer = RecipeReadSerializer(new_recipe, context={"request": request})
-        return Response(serializer.data)
 
 
 class IngredientAmountViewSet(viewsets.ModelViewSet):

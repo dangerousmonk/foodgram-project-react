@@ -66,7 +66,7 @@ class Recipe(models.Model):
         blank=False,
         upload_to='recipes/',
     )
-    description = models.TextField(
+    text = models.TextField(
         null=False,
         blank=False,
         verbose_name=_('description'),
