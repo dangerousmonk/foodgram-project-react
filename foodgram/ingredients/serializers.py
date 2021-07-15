@@ -4,6 +4,11 @@ from foodgram.users.serializers import UserSerializer
 from .models import Ingredient
 
 class IngredientSerializer(serializers.ModelSerializer):
+    measurement_unit = serializers.CharField(source='measurement_unit.name')
     class Meta:
         model = Ingredient
-        fields = '__all__'
+        fields = [
+            'id',
+            'name',
+            'measurement_unit'
+        ]

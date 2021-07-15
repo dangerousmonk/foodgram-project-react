@@ -1,21 +1,12 @@
+from django.core.files.base import ContentFile
+import base64, uuid
 from rest_framework import serializers
 
-from .models import Tag, Recipe, IngredientAmount, Favourites
 from foodgram.ingredients.models import Ingredient
 from foodgram.users.serializers import UserSerializer
 from foodgram.users.models import UserSubscription
-from django.core.files.base import ContentFile
+from .models import Tag, Recipe, IngredientAmount, Favourites
 
-
-import base64, uuid
-
-
-
-
-import base64
-
-from django.core.files.base import ContentFile
-from rest_framework import serializers
 
 class Base64ImageField(serializers.ImageField):
     def to_internal_value(self, data):
@@ -23,7 +14,7 @@ class Base64ImageField(serializers.ImageField):
             format, imgstr = data.split(';base64,')
             ext = format.split('/')[-1]
             id = uuid.uuid4()
-            data = ContentFile(base64.b64decode(imgstr), name = id.urn[9:] + '.' + ext)
+            data = ContentFile(base64.b64decode(imgstr), name=id.urn[9:] + '.' + ext)
         return super().to_internal_value(data)
 
 
@@ -33,30 +24,37 @@ class TagSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'color', 'slug']
 
 
-class IngredientSerializer(serializers.ModelSerializer):
-    # amount = serializers.SerializerMethodField('get_amount')
-    measurement_unit = serializers.CharField(source='measurement_unit.name')
-
-    '''def get_amount(self, obj):
-        return IngredientAmount.objects.get(ingredient=obj).amount'''
-
-    class Meta:
-        model = Ingredient
-        fields = ['id', 'name', 'measurement_unit']
-
-
 class IngredientAmountSerializer(serializers.ModelSerializer):
-    ingredient = IngredientSerializer(read_only=True)
+    name = serializers.ReadOnlyField(source='ingredient.name')
+    measurement_unit = serializers.ReadOnlyField(source='ingredient.measurement_unit.name')
 
     class Meta:
         model = IngredientAmount
-        fields = ['id', 'ingredient', 'amount']
+        fields = [
+            'id',
+            'name',
+            'measurement_unit',
+            'amount'
+        ]
+
+# to remove
+'''class IngredientSerializer(serializers.ModelSerializer):
+    amount = IngredientAmountSerializer(source='ingredient_amounts')
+    measurement_unit = serializers.CharField(source='measurement_unit.name')
+
+    def get_amount(self, obj):
+        return IngredientAmount.objects.filter(ingredient=obj, recipe='ingredient_amounts.recipe').amount
+
+    class Meta:
+        model = Ingredient
+        fields = ['id', 'name', 'measurement_unit', 'amount']'''
+
 
 
 class RecipeReadSerializer(serializers.ModelSerializer):
     author = UserSerializer()
     tags = TagSerializer(many=True)
-    ingredients = IngredientSerializer(many=True)
+    ingredients = IngredientAmountSerializer(many=True, source='ingredient_amounts')
     is_favorited = serializers.SerializerMethodField(read_only=True)
     image = Base64ImageField()
 
@@ -120,10 +118,12 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         model = Recipe
         fields = '__all__'
 
+
 class FavouritesSerializer(serializers.ModelSerializer):
     class Meta:
-        model =Favourites
+        model = Favourites
         fields = '__all__'
+
 
 class RecipeFavoriteSerializer(serializers.ModelSerializer):
     image = Base64ImageField()
@@ -139,17 +139,28 @@ class RecipeFavoriteSerializer(serializers.ModelSerializer):
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):
-    #subscription = UserSerializer(read_only=True)
+    # subscription = UserSerializer(read_only=True)
     email = serializers.EmailField(source='subscription.email')
     id = serializers.EmailField(source='subscription.id')
     username = serializers.EmailField(source='subscription.username')
     first_name = serializers.EmailField(source='subscription.first_name')
     last_name = serializers.EmailField(source='subscription.first_name')
-    recipes = RecipeFavoriteSerializer(many=True,source='subscription.recipes')
+    is_subscribed = serializers.SerializerMethodField(read_only=True)
+    recipes = RecipeFavoriteSerializer(many=True, source='subscription.recipes')
 
     class Meta:
         model = UserSubscription
-        fields = ['email', 'id', 'first_name', 'last_name', 'username', 'recipes']
-
-
-
+        fields = [
+            'email',
+            'id',
+            'username',
+            'first_name',
+            'last_name',
+            'is_subscribed',
+            'recipes',
+        ]
+    def get_is_subscribed(self, obj):
+        user = self.context['request'].user
+        if user.is_anonymous:
+            return False
+        return UserSubscription.objects.filter(subscriber=user, subscription=obj.subscription).exists()

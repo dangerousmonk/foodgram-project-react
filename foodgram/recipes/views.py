@@ -20,9 +20,11 @@ class TagViewSet(
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
-    queryset = Recipe.objects.all()
-    # return Recipe.objects.filter(author=request.user.
-    # is favorited
+    def get_queryset(self):
+        if not self.request.query_params.get('is_favorited'):
+            return Recipe.objects.all()
+        user = self.request.user
+        return Recipe.objects.filter(in_favourites__user=user)
 
     def get_serializer_class(self):
         if self.request.method in ['PUT', 'POST']:
@@ -32,17 +34,17 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
-    @action(detail=True, methods=['get'])
+    @action(detail=True, methods=['get', 'delete'])
     def favorite(self, request, pk=None):
         user = self.request.user
         recipe = self.get_object()
-        Favourites.objects.create(user=user, recipe=recipe)
-        return Response({'status': 'Рецепт успешно добавлен в избранное'})
-        #else:
-        #return Response(serializer.errors,
-        #                    status=status.HTTP_400_BAD_REQUEST)
-
-
+        if request.method == 'GET':
+            Favourites.objects.create(user=user, recipe=recipe)
+            return Response({'status': 'Рецепт успешно добавлен в избранное'})
+        else:
+            fav_recipe = Favourites.objects.get(recipe=recipe, user=user)
+            fav_recipe.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
 
 class IngredientAmountViewSet(viewsets.ModelViewSet):
     queryset = IngredientAmount.objects.all()
