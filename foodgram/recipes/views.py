@@ -21,6 +21,8 @@ class TagViewSet(
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
+    # return Recipe.objects.filter(author=request.user.
+    # is favorited
 
     def get_serializer_class(self):
         if self.request.method in ['PUT', 'POST']:
@@ -46,4 +48,9 @@ class IngredientAmountViewSet(viewsets.ModelViewSet):
     queryset = IngredientAmount.objects.all()
     serializer_class = IngredientAmountSerializer
 
+class FavoriteViewSet(viewsets.ModelViewSet):
+    serializer_class = FavouritesSerializer
+    def get_queryset(self):
+        user = self.request.user
+        return Favourites.objects.filter(user=user)
 

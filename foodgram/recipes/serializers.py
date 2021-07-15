@@ -1,9 +1,9 @@
 from rest_framework import serializers
 
-from foodgram.users.serializers import UserSerializer
 from .models import Tag, Recipe, IngredientAmount, Favourites
 from foodgram.ingredients.models import Ingredient
-
+from foodgram.users.serializers import UserSerializer
+from foodgram.users.models import UserSubscription
 from django.core.files.base import ContentFile
 
 
@@ -124,3 +124,32 @@ class FavouritesSerializer(serializers.ModelSerializer):
     class Meta:
         model =Favourites
         fields = '__all__'
+
+class RecipeFavoriteSerializer(serializers.ModelSerializer):
+    image = Base64ImageField()
+
+    class Meta:
+        model = Recipe
+        fields = [
+            'id',
+            'name',
+            'image',
+            'cooking_time',
+        ]
+
+
+class SubscriptionSerializer(serializers.ModelSerializer):
+    #subscription = UserSerializer(read_only=True)
+    email = serializers.EmailField(source='subscription.email')
+    id = serializers.EmailField(source='subscription.id')
+    username = serializers.EmailField(source='subscription.username')
+    first_name = serializers.EmailField(source='subscription.first_name')
+    last_name = serializers.EmailField(source='subscription.first_name')
+    recipes = RecipeFavoriteSerializer(many=True,source='subscription.recipes')
+
+    class Meta:
+        model = UserSubscription
+        fields = ['email', 'id', 'first_name', 'last_name', 'username', 'recipes']
+
+
+

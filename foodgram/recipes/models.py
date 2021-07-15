@@ -98,7 +98,7 @@ class Recipe(models.Model):
     class Meta:
         verbose_name = _('Recipe')
         verbose_name_plural = _('Recipes')
-        ordering = ['created_date']
+        ordering = ['-created_date']
         unique_together = ['author', 'name']
 
     def __str__(self):
