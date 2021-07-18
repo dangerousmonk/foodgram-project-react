@@ -30,6 +30,7 @@ DJANGO_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_filters',
 ]
 
 PROJECT_APPS = [
@@ -142,10 +143,10 @@ DJOSER = {
     'SEND_ACTIVATION_EMAIL': True,
     'SEND_CONFIRMATION_EMAIL': True,
     'ACTIVATION_URL': 'activate/{uid}/{token}',
-    #'HIDE_USERS': False,
+    'HIDE_USERS': False,
     'PERMISSIONS':
         {'user': ['djoser.permissions.CurrentUserOrAdminOrReadOnly'],
-         'user_list': ['djoser.permissions.CurrentUserOrAdminOrReadOnly']},
+         'user_list': ['rest_framework.permissions.AllowAny']},
     # 'SERIALIZERS': {'user_create': 'foodgram.users.serializers.CustomUserCreateSerializer'},
 }
 

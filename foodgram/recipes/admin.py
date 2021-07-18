@@ -3,7 +3,7 @@ from . import models
 
 admin.site.register(models.Tag)
 admin.site.register(models.IngredientAmount)
-admin.site.register(models.Favourites)
+admin.site.register(models.FavouriteRecipe)
 
 
 class IngredientAmountInline(admin.TabularInline):

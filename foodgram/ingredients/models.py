@@ -39,6 +39,7 @@ class Ingredient(models.Model):
         max_length=255,
         blank=False,
         null=False,
+        unique=True,
         verbose_name=_('name'),
     )
     measurement_unit = models.ForeignKey(

@@ -7,19 +7,19 @@ from .utils import unique_slugify
 
 
 class Tag(models.Model):
-    # TODO: unique name
     name = models.CharField(
-        max_length=255,
+        max_length=200,
         null=False,
         blank=False,
+        unique=True,
         verbose_name=_('name'),
     )
-    # TODO: unique color?
     color = models.CharField(
         max_length=32,
         null=False,
         blank=False,
         default='#E26C2D',
+        unique=True,
         verbose_name=_('color'),
     )
     slug = models.SlugField(
@@ -53,12 +53,11 @@ class Recipe(models.Model):
         verbose_name=_('author'),
     )
     name = models.CharField(
-        max_length=255,
+        max_length=200,
         blank=False,
         null=False,
         verbose_name=_('name'),
     )
-    # TODO: make less chaotic upload
     image = models.ImageField(
         verbose_name=_('image'),
         help_text=_('select image to upload'),
@@ -130,13 +129,13 @@ class IngredientAmount(models.Model):
         verbose_name = _('Ingredient amount')
         verbose_name_plural = _('Ingredient amounts')
         ordering = ['id']
-        #unique_together = ['recipe', 'ingredient']
+        unique_together = ['recipe', 'ingredient']
 
     def __str__(self):
         return f'{self.recipe.name} - {self.ingredient.name}'
 
 
-class Favourites(models.Model):
+class FavouriteRecipe(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         related_name='favourite_recipes',
@@ -149,20 +148,37 @@ class Favourites(models.Model):
         on_delete=models.CASCADE,
         verbose_name=_('recipe'),
     )
-    added_at = models.DateTimeField(
+    is_in_shopping_cart = models.BooleanField(
         null=False,
-        blank=False,
+        blank=True,
+        default=False,
+        verbose_name=_('is in shopping cart')
+    )
+    is_favorited = models.BooleanField(
+        null=False,
+        blank=True,
+        default=False,
+        verbose_name=_('is in favorites')
+    )
+    added_to_favorites = models.DateTimeField(
+        null=False,
+        blank=True,
+        auto_now_add=True,
+        verbose_name=_('added at')
+    )
+    added_to_shopping_cart = models.DateTimeField(
+        null=False,
+        blank=True,
         auto_now_add=True,
         verbose_name=_('added at')
     )
 
     class Meta:
-        verbose_name = _('Favourites')
-        verbose_name_plural = _('Favourites')
-        ordering = ['-added_at', 'id']
+        verbose_name = _('Favorites')
+        verbose_name_plural = _('Favorites')
+        ordering = ['-added_to_favorites', '-added_to_shopping_cart']
         unique_together = ['user', 'recipe']
 
     def __str__(self):
         return f'{self.user.username} - {self.recipe.name}'
-
 
