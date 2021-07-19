@@ -60,7 +60,7 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=255, verbose_name='name')),
                 ('image', models.ImageField(help_text='select image to upload', upload_to='recipes/', verbose_name='image')),
-                ('description', models.TextField(verbose_name='description')),
+                ('text', models.TextField(verbose_name='description')),
                 ('time', models.PositiveSmallIntegerField(validators=[django.core.validators.MinValueValidator(1)], verbose_name='preparation time')),
                 ('author', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='recipes', to=settings.AUTH_USER_MODEL, verbose_name='recipe author')),
                 ('ingredients', models.ManyToManyField(related_name='recipes', through='recipes.IngredientAmount', to='recipes.Ingredient', verbose_name='ingredients')),

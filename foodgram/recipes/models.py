@@ -1,8 +1,8 @@
+from django.db.models import Exists, OuterRef
 from django.conf import settings
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-
 from .utils import unique_slugify
 
 
@@ -42,6 +42,32 @@ class Tag(models.Model):
         if not self.id:
             self.slug = unique_slugify(self.name, self.__class__)
         return super().save(*args, **kwargs)
+
+
+class RecipeQuerySet(models.QuerySet):
+    def with_tags_and_authors(self):
+        return self.select_related('author').prefetch_related('tags', 'ingredients')
+
+    def with_favorited(self, user):
+        sub_qs = FavouriteRecipe.objects.filter(
+            user=user,
+            recipe=OuterRef('id'),
+            is_favorited=True,
+        )
+        return self.annotate(is_favorited=Exists(sub_qs))
+
+    def with_shopping_cart(self, user):
+        sub_qs = FavouriteRecipe.objects.filter(
+            user=user,
+            recipe=OuterRef('id'),
+            is_in_shopping_cart=True,
+        )
+        return self.annotate(is_in_shopping_cart=Exists(sub_qs))
+
+    def with_favorited_shopping_cart(self, user):
+        qs = self.with_favorited(user=user)
+        qs = qs.with_shopping_cart(user=user)
+        return qs
 
 
 class Recipe(models.Model):
@@ -92,7 +118,9 @@ class Recipe(models.Model):
         blank=False,
         auto_now_add=True,
         verbose_name=_('created date'),
-         )
+    )
+    objects = models.Manager()
+    recipe_objects = RecipeQuerySet.as_manager()
 
     class Meta:
         verbose_name = _('Recipe')
@@ -184,4 +212,3 @@ class FavouriteRecipe(models.Model):
 
     def __str__(self):
         return f'{self.user.username} - {self.recipe.name}'
-
