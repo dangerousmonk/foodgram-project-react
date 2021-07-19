@@ -12,11 +12,12 @@ from rest_framework_csv import renderers as r
 
 from django.http import HttpResponse
 
+from .permissions import IsRecipeOwnerOrReadOnly
 from .filters import RecipeFilter
 from .models import Tag, Recipe, IngredientAmount, FavouriteRecipe
 from .serializers import TagSerializer, RecipeReadSerializer, IngredientAmountSerializer, RecipeWriteSerializer
 from foodgram.ingredients.models import Ingredient
-from foodgram.permissions import IsOwnerOrReadOnly
+
 
 
 class TagViewSet(
@@ -33,7 +34,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.select_related('author').all()
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = RecipeFilter
-    permission_classes = [IsOwnerOrReadOnly]
+    permission_classes = [IsRecipeOwnerOrReadOnly]
 
     def get_serializer_class(self):
         if self.request.method in ['PUT', 'POST', 'PATCH']:

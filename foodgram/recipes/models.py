@@ -103,6 +103,9 @@ class Recipe(models.Model):
     def __str__(self):
         return self.name
 
+    def list_tags(self):
+        return self.tags.values_list('name', flat=True)
+
 
 class IngredientAmount(models.Model):
     recipe = models.ForeignKey(

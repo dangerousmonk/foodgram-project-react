@@ -7,7 +7,6 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import permissions
 from django_filters import rest_framework as filters
-from foodgram.permissions import IsOwnerOrReadOnly
 from .filters import UserSubscriptionFilter
 
 from .serializers import SubscriptionSerializer, SubscriptionWriteSerializer

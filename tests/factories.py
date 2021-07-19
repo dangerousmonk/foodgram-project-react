@@ -1,7 +1,11 @@
 import factory
 from django.conf import settings
+from random import randrange
 from django.contrib.auth import get_user_model
+from django.core.files.base import ContentFile
+import datetime
 import random
+import factory.fuzzy
 
 User = get_user_model()
 
@@ -33,3 +37,60 @@ class SubscriptionFactory(factory.django.DjangoModelFactory):
 
     subscriber = factory.SubFactory(UserFactory)
     subscription = factory.SubFactory(UserFactory)
+
+class RecipeFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = 'recipes.Recipe'
+        strategy = factory.CREATE_STRATEGY
+
+    author = factory.SubFactory(UserFactory)
+    name = factory.Sequence(lambda n: f'recipe-{n}')
+    text = factory.Sequence(lambda n: f'Description-{n}')
+    image = factory.LazyAttribute(
+        lambda _: ContentFile(
+            factory.django.ImageField()._make_data(
+                {'width': 1024, 'height': 768}
+            ), 'test.jpg'
+        )
+    )
+    created_date = factory.LazyFunction(datetime.datetime.now)
+    cooking_time = factory.fuzzy.FuzzyInteger(1,50)
+
+
+    @factory.post_generation
+    def tags(self, create, extracted, **kwargs):
+        if not create:
+            return
+        if extracted:
+            for tag in extracted:
+                self.tags.add(tag)
+
+class IngredientAmountFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = 'recipes.IngredientAmount'
+        strategy = factory.CREATE_STRATEGY
+
+    author = factory.SubFactory(UserFactory)
+    name = factory.SubFactory(UserFactory)
+    amount = factory.Iterator([randrange(1,50)])
+
+
+
+
+class MeasurementUnitFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = 'ingredients.MeasurementUnit'
+        strategy = factory.CREATE_STRATEGY
+
+    name = factory.Sequence(lambda n: f'measure-{n}')
+    metric = factory.Iterator(['mass', 'volume', 'quantity'])
+
+
+
+class IngredientFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = 'ingredients.Ingredient'
+        strategy = factory.CREATE_STRATEGY
+
+    name = factory.Sequence(lambda n: f'ingredient-{n}')
+    measurement_unit = factory.SubFactory(MeasurementUnitFactory)
