@@ -1,11 +1,15 @@
+from django.contrib.auth import get_user_model
 from django_filters import rest_framework as filters
 from django.db.models import Sum
+from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from rest_framework import mixins
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework import status
 import csv
+
+User = get_user_model()
 
 from rest_framework.settings import api_settings
 from rest_framework_csv import renderers as r
@@ -31,7 +35,9 @@ class TagViewSet(
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
-    queryset = Recipe.objects.select_related('author').all()
+    def get_queryset(self):
+        user = get_object_or_404(User, id=self.request.user.id)
+        return Recipe.recipe_objects.with_favorited_shopping_cart(user=user)
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = RecipeFilter
     permission_classes = [IsRecipeOwnerOrReadOnly]
@@ -54,7 +60,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 defaults={'user': user, 'recipe': recipe, 'is_favorited': True})
             return Response({'status': 'Рецепт успешно добавлен в избранное'})
         else:
-            fav_recipe = FavouriteRecipe.objects.get(recipe=recipe, user=user)
+            fav_recipe = get_object_or_404(FavouriteRecipe, recipe=recipe, user=user)
             if not fav_recipe.is_in_shopping_cart:
                 fav_recipe.delete()
             else:

@@ -5,7 +5,7 @@ from .models import MeasurementUnit, Ingredient
 
 @register(Ingredient)
 class IngredientAdmin(ModelAdmin):
-    list_display = ('name', 'measurement_unit')
+    list_display = ('id', 'name', 'measurement_unit')
     search_fields = ('name',)
     list_filter = ('name', 'measurement_unit',)
     ordering = ('name',)
@@ -13,7 +13,7 @@ class IngredientAdmin(ModelAdmin):
 
 @register(MeasurementUnit)
 class MeasurementUnit(ModelAdmin):
-    list_display = ('name', 'metric')
+    list_display = ('id', 'name', 'metric')
     search_fields = ('name',)
     list_filter = ('name', 'metric',)
     ordering = ('name',)

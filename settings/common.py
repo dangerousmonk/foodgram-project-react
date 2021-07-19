@@ -140,9 +140,9 @@ SIMPLE_JWT = {
 
 DJOSER = {
     'PASSWORD_RESET_CONFIRM_URL': 'users/set_password/{uid}/{token}',
-    'SEND_ACTIVATION_EMAIL': True,
+    #'SEND_ACTIVATION_EMAIL': True,
     'SEND_CONFIRMATION_EMAIL': True,
-    'ACTIVATION_URL': 'activate/{uid}/{token}',
+    #'ACTIVATION_URL': 'activate/{uid}/{token}',
     'HIDE_USERS': False,
     'PERMISSIONS':
         {'user': ['djoser.permissions.CurrentUserOrAdminOrReadOnly'],

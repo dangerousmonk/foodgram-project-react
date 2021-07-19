@@ -15,15 +15,19 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Favourites',
+            name='FavouriteRecipe',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('added_at', models.DateTimeField(auto_now_add=True, verbose_name='added at')),
+                ('is_in_shopping_cart',
+                 models.BooleanField(blank=True, default=False, verbose_name='is in shopping cart')),
+                ('is_favorited', models.BooleanField(blank=True, default=False, verbose_name='is in favorites')),
+                ('added_to_favorites', models.DateTimeField(auto_now_add=True, verbose_name='added at')),
+                ('added_to_shopping_cart', models.DateTimeField(auto_now_add=True, verbose_name='added at')),
             ],
             options={
-                'verbose_name': 'Favourites',
-                'verbose_name_plural': 'Favourites',
-                'ordering': ['-added_at', 'id'],
+                'verbose_name': 'Favorites',
+                'verbose_name_plural': 'Favorites',
+                'ordering': ['-added_to_favorites', '-added_to_shopping_cart'],
             },
         ),
         migrations.AlterUniqueTogether(
@@ -50,19 +54,5 @@ class Migration(migrations.Migration):
         ),
         migrations.DeleteModel(
             name='MeasurementUnit',
-        ),
-        migrations.AddField(
-            model_name='favourites',
-            name='recipe',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='in_favourites', to='recipes.recipe', verbose_name='recipe'),
-        ),
-        migrations.AddField(
-            model_name='favourites',
-            name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='favourite_recipes', to=settings.AUTH_USER_MODEL, verbose_name='user'),
-        ),
-        migrations.AlterUniqueTogether(
-            name='favourites',
-            unique_together={('user', 'recipe')},
         ),
     ]

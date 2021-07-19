@@ -9,6 +9,8 @@ class MeasurementUnit(models.Model):
         mass = _('mass'), _('mass')
         volume = _('volume'), _('volume')
         quantity = _('quantity'), _('quantity')
+        percent = _('percent'), _('percent')
+        miscellaneous = _('miscellaneous'), _('miscellaneous')
 
     name = models.CharField(
         max_length=255,
@@ -41,6 +43,7 @@ class Ingredient(models.Model):
         null=False,
         unique=True,
         verbose_name=_('name'),
+        db_index=True,
     )
     measurement_unit = models.ForeignKey(
         'MeasurementUnit',
