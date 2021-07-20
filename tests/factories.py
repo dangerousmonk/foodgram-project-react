@@ -1,10 +1,8 @@
 import factory
-from django.conf import settings
 from random import randrange
 from django.contrib.auth import get_user_model
 from django.core.files.base import ContentFile
 import datetime
-import random
 import factory.fuzzy
 
 User = get_user_model()

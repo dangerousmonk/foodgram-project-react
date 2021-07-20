@@ -1,30 +1,23 @@
 import pytest
 from . import factories
 from foodgram.recipes.models import Recipe
-import json
+import random
+from django.test import override_settings
+import shutil
 
-class TestTags:
+TEMP_DIR = 'test_files'
+
+
+class TestRecipes:
     ENDPOINT = '/api/recipes/'
     _RECIPES_NUM = 8
     _INGREDIENTS_NUM = 4
     _PAGE_SIZE = 6
     _TAGS_NUM = 5
 
+    @override_settings(MEDIA_ROOT=(TEMP_DIR + '/media'))
     @pytest.mark.django_db(transaction=True)
     def test_get_recipes_endpoint(self, client, user_client, test_user):
-        #tags = factories.TagFactory.create_batch(5)
-        #ingredients = factories.IngredientFactory.create_batch(5)
-        #recipe_1 = factories.RecipeFactory.build()
-        '''recipe_1.tags.add(*tags)
-        print(recipe_1.name)
-        print(recipe_1.author)
-        print(recipe_1.image)
-        print(recipe_1.text)
-        print(recipe_1.tags.all())
-        print(recipe_1.ingredients.all())
-        print(recipe_1.created_date)
-        print(recipe_1.cooking_time)
-        assert False'''
         factories.RecipeFactory.create_batch(self._RECIPES_NUM)
         response = client.get(self.ENDPOINT)
         assert response.status_code != 404, (
@@ -38,19 +31,9 @@ class TestTags:
             f'{self.ENDPOINT} must be available for authorized clients'
         )
 
-
+    @override_settings(MEDIA_ROOT=(TEMP_DIR + '/media'))
     @pytest.mark.django_db(transaction=True)
     def test_recipes_pagination(self, client, user_client, test_user):
-        '''recipe_1.tags.add(*tags)
-        print(recipe_1.name)
-        print(recipe_1.author)
-        print(recipe_1.image)
-        print(recipe_1.text)
-        print(recipe_1.tags.all())
-        print(recipe_1.ingredients.all())
-        print(recipe_1.created_date)
-        print(recipe_1.cooking_time)
-        assert False'''
         factories.RecipeFactory.create_batch(self._RECIPES_NUM)
         response = client.get(self.ENDPOINT)
         response_data = response.json()
@@ -66,37 +49,49 @@ class TestTags:
         assert len(response_data['results']) == self._PAGE_SIZE, (
             f'{self.ENDPOINT} must return {self._PAGE_SIZE} number of instances')
 
+    @override_settings(MEDIA_ROOT=(TEMP_DIR + '/media'))
     @pytest.mark.django_db(transaction=True)
     def test_create_recipe(self, client, user_client, test_user):
+        num_db_objects = Recipe.objects.count()
         tags = factories.TagFactory.create_batch(self._TAGS_NUM)
-        ingr = factories.IngredientFactory.create()
-        tags_ids = []
+        tags_ids, ingredients = [], []
         for tag in tags:
             tags_ids.append(tag.id)
-        ingredients = factories.IngredientFactory.create_batch(self._INGREDIENTS_NUM)
+        for _ in range(self._INGREDIENTS_NUM):
+            ingredient = factories.IngredientFactory.create()
+            amount = random.randint(1, 30)
+            ingredients.append({'id': ingredient.id, 'amount': amount})
         recipe = factories.RecipeFactory.build()
+        encoded_image = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///' \
+                        '9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg=='
         data = {
             'author': test_user.id,
             'name': recipe.name,
-            #'image': recipe.image,
+            'image': encoded_image,
             'text': recipe.text,
             'tags': tags_ids,
-            'ingredients': [{"id": ingr.id, "amount": 12}],
+            'ingredients': ingredients,
             'cooking_time': recipe.cooking_time,
             'created_date': recipe.created_date,
         }
-        date_as_json = json.dumps(data)
-        response = user_client.post(self.ENDPOINT, data=date_as_json, format='application/json')
-        print(response)
+        response = user_client.post(self.ENDPOINT, data=data, format='json')
+        assert response.status_code == 201
+        assert Recipe.objects.count() == num_db_objects + 1, (
+            f'POST with correct data to {self.ENDPOINT} must create new recipe'
+        )
+
         print(response.json())
-        assert response.status_code == 403
+        assert False
 
 
 
 
 
+def delete_temp_dir():
+    try:
+        shutil.rmtree(TEMP_DIR)
+    except OSError:
+        pass
 
 
-
-
-
+delete_temp_dir()
