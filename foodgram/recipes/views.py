@@ -36,6 +36,8 @@ class TagViewSet(
 
 class RecipeViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return Recipe.objects.all()
         user = get_object_or_404(User, id=self.request.user.id)
         return Recipe.recipe_objects.with_favorited_shopping_cart(user=user)
     filter_backends = (filters.DjangoFilterBackend,)

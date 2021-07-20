@@ -122,10 +122,13 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
     ingredients = IngredientWriteSerializer(many=True)
     author = serializers.PrimaryKeyRelatedField(read_only=True, default=serializers.CurrentUserDefault())
     image = Base64ImageField(max_length=False, use_url=True)
+    is_favorited = serializers.BooleanField(read_only=True)
 
     def create(self, validated_data):
         tags_data = validated_data.pop('tags')
         ingredients_data = validated_data.pop('ingredients')
+        print(type(validated_data))
+        print(validated_data)
         new_recipe = Recipe.objects.create(**validated_data)  # TODO: bulk add to optimize db queries
         for tag in tags_data:
             tag_object = Tag.objects.get(id=tag.id)
@@ -169,7 +172,8 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             'image',
             'name',
             'text',
-            'cooking_time'
+            'cooking_time',
+            'is_favorited'
         ]
 
 class RecipeFavoriteSerializer(serializers.ModelSerializer):
