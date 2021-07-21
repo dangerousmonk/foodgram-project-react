@@ -7,12 +7,8 @@ from rest_framework import mixins
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework import status
-import csv
-
+from rest_framework import permissions
 User = get_user_model()
-
-from rest_framework.settings import api_settings
-from rest_framework_csv import renderers as r
 
 from django.http import HttpResponse
 
@@ -52,7 +48,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
-    @action(detail=True, methods=['get', 'delete'])
+    @action(detail=True, methods=['get', 'delete'],
+            permission_classes=[permissions.IsAuthenticated])
     def favorite(self, request, pk=None):
         user = self.request.user
         recipe = self.get_object()
@@ -70,7 +67,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 fav_recipe.save()
             return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @action(detail=True, methods=['get', 'delete'])
+    @action(detail=True, methods=['get', 'delete'],
+            permission_classes=[permissions.IsAuthenticated])
     def shopping_cart(self, request, pk=None):
         user = self.request.user
         recipe = self.get_object()
@@ -96,7 +94,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
         ingredients = recipes.values(
             'ingredients__name', 'ingredients__measurement_unit__name').order_by('ingredients__name').annotate(
             ingredients_total=Sum('ingredient_amounts__amount'))
-        print(ingredients)
         shopping_list = {}
         for item in ingredients:
             title = item['ingredients__name']
