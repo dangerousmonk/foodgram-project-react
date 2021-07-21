@@ -10,6 +10,7 @@ coreschema==0.0.4
 cryptography==3.4.7
 defusedxml==0.7.1
 Django==3.2.5
+django-cors-headers==3.7.0
 django-environ==0.4.5
 django-filter==2.4.0
 django-templated-mail==1.1.1
@@ -49,7 +50,3 @@ unicodecsv==0.14.1
 Unidecode==1.2.0
 uritemplate==3.0.1
 urllib3==1.26.6
-django-cors-headers==3.7.0
-gunicorn==20.0.4
-psycopg2-binary==2.8.5
-

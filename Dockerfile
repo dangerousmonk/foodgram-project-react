@@ -4,4 +4,4 @@ WORKDIR /code
 COPY requirements-dev.txt .
 RUN pip install -r requirements-dev.txt
 COPY . .
-CMD gunicorn settings.wsgi:application --bind 0.0.0.0:8000
+CMD gunicorn foodgram.wsgi:application --bind 0.0.0.0:8000

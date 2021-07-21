@@ -23,7 +23,7 @@ from foodgram.users import views
 from foodgram.routers import v1_router
 
 urlpatterns = [
-    path('', views.IndexView.as_view(), name='index'),
+    #path('', views.IndexView.as_view(), name='index'),
     path('admin/', admin.site.urls),
     path('api/', include(v1_router.urls)),
     path('api/', include('djoser.urls')),

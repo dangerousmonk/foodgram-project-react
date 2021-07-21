@@ -80,7 +80,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'settings.wsgi.application'
+WSGI_APPLICATION = 'foodgram.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
@@ -140,13 +140,13 @@ SIMPLE_JWT = {
 
 DJOSER = {
     'PASSWORD_RESET_CONFIRM_URL': 'users/set_password/{uid}/{token}',
-    #'SEND_ACTIVATION_EMAIL': True,
     'SEND_CONFIRMATION_EMAIL': True,
-    #'ACTIVATION_URL': 'activate/{uid}/{token}',
     'HIDE_USERS': False,
     'PERMISSIONS':
         {'user': ['djoser.permissions.CurrentUserOrAdminOrReadOnly'],
          'user_list': ['rest_framework.permissions.AllowAny']},
+         'password_reset': ['rest_framework.permissions.AllowAny'],
+         'password_reset_confirm': ['rest_framework.permissions.AllowAny']
     # 'SERIALIZERS': {'user_create': 'foodgram.users.serializers.CustomUserCreateSerializer'},
 }
 

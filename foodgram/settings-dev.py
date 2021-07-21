@@ -1,5 +1,5 @@
-from .common import *  # noqa
-from .common import env
+from .settings import *  # noqa
+from .settings import env
 
 DEBUG = True
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
