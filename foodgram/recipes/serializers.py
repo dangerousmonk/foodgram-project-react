@@ -6,7 +6,7 @@ from foodgram.ingredients.models import Ingredient
 
 from foodgram.users.models import UserSubscription
 from .models import Tag, Recipe, IngredientAmount, FavouriteRecipe
-
+from .services import add_recipe_with_ingredients_tags
 User = get_user_model()
 
 
@@ -125,10 +125,10 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
     is_favorited = serializers.BooleanField(read_only=True)
 
     def create(self, validated_data):
+        '''print(type(validated_data))
+        print(validated_data)
         tags_data = validated_data.pop('tags')
         ingredients_data = validated_data.pop('ingredients')
-        print(type(validated_data))
-        print(validated_data)
         new_recipe = Recipe.objects.create(**validated_data)  # TODO: bulk add to optimize db queries
         for tag in tags_data:
             tag_object = Tag.objects.get(id=tag.id)
@@ -137,16 +137,15 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             ingredient_object = Ingredient.objects.get(id=ingredient['id'])
             new_recipe.ingredients.add(ingredient_object, through_defaults={'amount': ingredient['amount']})
         new_recipe.save()
-        return new_recipe
+        return new_recipe'''
+        instance = add_recipe_with_ingredients_tags(validated_data)
+        return instance
 
     def update(self, instance, validated_data):
         tags_data = validated_data.pop('tags')
         instance.tags.clear()
         instance.tags.add(*tags_data)
-        print(validated_data)
         ingredients_data = validated_data.pop('ingredients')
-        print('ingredients data:')
-        print(ingredients_data)
         instance.ingredients.clear()
         for ingredient in ingredients_data:
             ingredient_object = Ingredient.objects.get(id=ingredient['id'])

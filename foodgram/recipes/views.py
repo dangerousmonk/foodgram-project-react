@@ -60,7 +60,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             obj, created = FavouriteRecipe.objects.update_or_create(
                 user=user, recipe=recipe,
                 defaults={'user': user, 'recipe': recipe, 'is_favorited': True})
-            return Response({'status': 'Рецепт успешно добавлен в избранное'})
+            return Response({'status': 'Рецепт успешно добавлен в избранное'},status=status.HTTP_201_CREATED)
         else:
             fav_recipe = get_object_or_404(FavouriteRecipe, recipe=recipe, user=user)
             if not fav_recipe.is_in_shopping_cart:
