@@ -1,5 +1,4 @@
 from django.shortcuts import get_object_or_404
-from django.views import generic
 from rest_framework import viewsets
 from djoser.views import UserViewSet
 from rest_framework.decorators import action
@@ -7,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import permissions
 from django_filters import rest_framework as filters
-from .filters import UserSubscriptionFilter
+
 
 from .serializers import SubscriptionSerializer, SubscriptionWriteSerializer
 from .models import UserSubscription
@@ -18,19 +17,17 @@ User = get_user_model()
 from .serializers import UserSerializer
 
 
-class IndexView(generic.TemplateView):
-    template_name = 'build/index.html'
 
 
 class SubscriptionViewSet(viewsets.ModelViewSet):
     serializer_class = SubscriptionSerializer
     filter_backends = (filters.DjangoFilterBackend,)
-    filterset_class = UserSubscriptionFilter
-    permission_classes = [permissions.IsAuthenticated]  # TODO: return 403 instead of 401
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         user = self.request.user
-        return UserSubscription.objects.filter(subscriber=user).select_related('subscriber')
+        return UserSubscription.objects.filter(
+            subscriber=user).select_related('subscriber')
 
 
 class CustomUserViewSet(UserViewSet):
@@ -40,6 +37,7 @@ class CustomUserViewSet(UserViewSet):
 
     @action(detail=True, methods=['get', 'delete'],
             serializer_class=SubscriptionWriteSerializer,
+            permission_classes=[permissions.IsAuthenticated]
             )
     def subscribe(self, request, id=None):
         user = self.request.user

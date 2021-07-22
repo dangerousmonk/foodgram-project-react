@@ -54,18 +54,25 @@ class RecipeViewSet(viewsets.ModelViewSet):
         user = self.request.user
         recipe = self.get_object()
         if request.method == 'GET':
-            obj, created = FavouriteRecipe.objects.update_or_create(
+            FavouriteRecipe.objects.update_or_create(
                 user=user, recipe=recipe,
-                defaults={'user': user, 'recipe': recipe, 'is_favorited': True})
-            return Response({'status': 'Рецепт успешно добавлен в избранное'},status=status.HTTP_201_CREATED)
+                defaults={
+                    'user': user,
+                    'recipe': recipe,
+                    'is_favorited': True
+                }
+            )
+            return Response(
+                {'status': 'Рецепт успешно добавлен в избранное'},
+                status=status.HTTP_201_CREATED
+            )
+        fav_recipe = get_object_or_404(FavouriteRecipe, recipe=recipe, user=user)
+        if not fav_recipe.is_in_shopping_cart:
+            fav_recipe.delete()
         else:
-            fav_recipe = get_object_or_404(FavouriteRecipe, recipe=recipe, user=user)
-            if not fav_recipe.is_in_shopping_cart:
-                fav_recipe.delete()
-            else:
-                fav_recipe.is_favorited = False
-                fav_recipe.save()
-            return Response(status=status.HTTP_204_NO_CONTENT)
+            fav_recipe.is_favorited = False
+            fav_recipe.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=True, methods=['get', 'delete'],
             permission_classes=[permissions.IsAuthenticated])
@@ -90,14 +97,22 @@ class RecipeViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get', 'delete'])
     def download_shopping_cart(self, request, pk=None):
         user = self.request.user
-        recipes = Recipe.objects.filter(in_favourites__user=user, in_favourites__is_in_shopping_cart=True)
+        recipes = Recipe.objects.filter(
+            in_favourites__user=user,
+            in_favourites__is_in_shopping_cart=True
+        )
         ingredients = recipes.values(
-            'ingredients__name', 'ingredients__measurement_unit__name').order_by('ingredients__name').annotate(
-            ingredients_total=Sum('ingredient_amounts__amount'))
+            'ingredients__name',
+            'ingredients__measurement_unit__name').order_by(
+            'ingredients__name').annotate(
+            ingredients_total=Sum('ingredient_amounts__amount')
+        )
         shopping_list = {}
         for item in ingredients:
             title = item['ingredients__name']
-            count = str(item['ingredients_total']) + ' ' + item['ingredients__measurement_unit__name']
+            count = str(item['ingredients_total']) + ' ' + item[
+                'ingredients__measurement_unit__name'
+            ]
             shopping_list[title] = count
         data = ''
         for key, value in shopping_list.items():

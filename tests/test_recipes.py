@@ -16,10 +16,7 @@ class TestRecipes:
     _PAGE_SIZE = 6
     _TAGS_NUM = 5
     _encoded_image = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///' \
-                    '9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg=='
-    _encoded_image2 = 'data:image/png;base64,kVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///' \
-                     '9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImHNoAAAAggCByxOyYQAAAABJRU5ErkJggg=='
-
+                     '9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg=='
 
     @override_settings(MEDIA_ROOT=(TEMP_DIR + '/media'))
     @pytest.mark.django_db(transaction=True)
@@ -75,7 +72,6 @@ class TestRecipes:
         assert isinstance(ingredients, list), (
             f'{self._ENDPOINT} must return ingredients as nested object(list)'
         )
-
 
         # Cleanup tmp dir for uploads
         try:
@@ -193,12 +189,18 @@ class TestRecipes:
 
     @override_settings(MEDIA_ROOT=(TEMP_DIR + '/media'))
     @pytest.mark.django_db(transaction=True)
-    def test_delete_recipe(self, client, user_client, piter_client, test_user, test_user2):
+    def test_delete_recipe(self, client, user_client, user2_client, test_user, test_user2):
         tags = factories.TagFactory.create_batch(self._TAGS_NUM)
-        recipe_by_user = factories.RecipeFactory.create(tags=tags,author=test_user)
-        recipe_by_user2 = factories.RecipeFactory.create(tags=tags[0],author=test_user2)
+        recipe_by_user = factories.RecipeFactory.create(tags=tags, author=test_user)
+        recipe_by_user2 = factories.RecipeFactory.create(tags=tags[0], author=test_user2)
         num_recipes_by_user = Recipe.objects.filter(author=test_user).count()
         all_recipes = Recipe.objects.count()
+
+        response = client.delete(f'{self._ENDPOINT}{recipe_by_user2.id}/')
+        assert response.status_code == 401, (
+            f'{self._ENDPOINT}{recipe_by_user2.id}/ must return 401 for unauthorized clients'
+        )
+
         response = user_client.delete(f'{self._ENDPOINT}{recipe_by_user2.id}/')
         assert Recipe.objects.count() == all_recipes
         assert response.status_code == 403, (
@@ -220,9 +222,3 @@ class TestRecipes:
             shutil.rmtree(TEMP_DIR)
         except OSError as err:
             print(err)
-
-
-
-
-
-

@@ -14,12 +14,11 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.conf import settings
-from django.conf.urls.static import static
+
 from django.urls import path, include
 from djoser import views as djoser_views
 
-from foodgram.users import views
+
 from foodgram.routers import v1_router
 
 urlpatterns = [

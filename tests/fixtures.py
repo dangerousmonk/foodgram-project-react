@@ -46,7 +46,7 @@ def user_client(test_user):
     return client
 
 @pytest.fixture
-def piter_client(test_user2):
+def user2_client(test_user2):
     from rest_framework.test import APIClient
     client = APIClient()
     token, created = Token.objects.get_or_create(user=test_user2)
