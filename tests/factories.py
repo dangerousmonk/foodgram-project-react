@@ -60,8 +60,11 @@ class RecipeFactory(factory.django.DjangoModelFactory):
         if not create:
             return
         if extracted:
-            for tag in extracted:
-                self.tags.add(tag)
+            try:
+                for tag in extracted:
+                    self.tags.add(tag)
+            except TypeError:
+                self.tags.add(extracted)
 
 class IngredientAmountFactory(factory.django.DjangoModelFactory):
     class Meta:

@@ -87,7 +87,7 @@ class TestTags:
         assert response_data.get('is_subscribed') == True, (
             '/api/users/{user_id}/subscribe/ must change is_subscribed flag'
         )
-    @pytest.mark.xfail
+
     @pytest.mark.django_db(transaction=True)
     def test_delete_subscription(self, client, user_client, test_user):
         user_1 = factories.UserFactory()

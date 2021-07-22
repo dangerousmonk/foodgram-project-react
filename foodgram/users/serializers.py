@@ -34,7 +34,7 @@ class SubscriptionSerializer(serializers.ModelSerializer):
     id = serializers.EmailField(source='subscription.id')
     username = serializers.EmailField(source='subscription.username')
     first_name = serializers.EmailField(source='subscription.first_name')
-    last_name = serializers.EmailField(source='subscription.first_name')
+    last_name = serializers.EmailField(source='subscription.last_name')
     is_subscribed = serializers.SerializerMethodField(read_only=True)
     #recipes = RecipeFavoriteSerializer(many=True, source='subscription.recipes')
     recipes_count = serializers.SerializerMethodField(read_only=True)

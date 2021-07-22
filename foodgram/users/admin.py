@@ -13,5 +13,5 @@ class UserAdmin(ModelAdmin):
     search_fields = ('username', 'email',)
     list_filter = ('username', 'email', 'first_name',)
     ordering = ('date_joined',)
-    empty_value_display = '-пусто-'
+    empty_value_display = '-'
     readonly_fields = ('date_joined','last_login')

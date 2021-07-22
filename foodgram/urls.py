@@ -28,4 +28,4 @@ urlpatterns = [
     path('api/', include('djoser.urls')),
     path('api/auth/token/login/', djoser_views.TokenCreateView.as_view(), name="login"),
     path('api/auth/token/logout/', djoser_views.TokenDestroyView.as_view(), name="login"),
-] +  static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]

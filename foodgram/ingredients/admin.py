@@ -1,6 +1,5 @@
-from django.contrib.admin import ModelAdmin, register, site
+from django.contrib.admin import ModelAdmin, register
 from .models import MeasurementUnit, Ingredient
-#from foodgram.recipes.admin import IngredientAmountInline
 
 
 @register(Ingredient)
@@ -9,7 +8,8 @@ class IngredientAdmin(ModelAdmin):
     search_fields = ('name',)
     list_filter = ('name', 'measurement_unit',)
     ordering = ('name',)
-    empty_value_display = '-пусто-'
+    empty_value_display = '-'
+
 
 @register(MeasurementUnit)
 class MeasurementUnit(ModelAdmin):
@@ -17,5 +17,4 @@ class MeasurementUnit(ModelAdmin):
     search_fields = ('name',)
     list_filter = ('name', 'metric',)
     ordering = ('name',)
-    empty_value_display = '-пусто-'
-
+    empty_value_display = '-'

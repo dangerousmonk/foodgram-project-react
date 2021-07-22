@@ -55,7 +55,7 @@ class Ingredient(models.Model):
     class Meta:
         verbose_name = _('Ingredient')
         verbose_name_plural = _('Ingredients')
-        ordering = ['measurement_unit', 'name']
+        ordering = ['name', 'measurement_unit', ]
         unique_together = ['name', 'measurement_unit']
 
     def __str__(self):

@@ -73,11 +73,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
         user = self.request.user
         recipe = self.get_object()
         if request.method == 'GET':
-            obj, created = FavouriteRecipe.objects.update_or_create(
+            FavouriteRecipe.objects.update_or_create(
                 user=user, recipe=recipe,
                 defaults={'user': user, 'recipe': recipe, 'is_in_shopping_cart': True},
             )
-            return Response({'status': 'Рецепт успешно добавлен в список покупок'})
+            return Response({'status': 'Рецепт успешно добавлен в список покупок'},status=status.HTTP_201_CREATED)
         else:
             fav_recipe = FavouriteRecipe.objects.get(recipe=recipe, user=user)
             if not fav_recipe.is_favorited:

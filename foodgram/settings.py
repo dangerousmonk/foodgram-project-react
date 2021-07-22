@@ -140,7 +140,15 @@ DJOSER = {
         {'user': ['djoser.permissions.CurrentUserOrAdminOrReadOnly'],
          'user_list': ['rest_framework.permissions.AllowAny']},
          'password_reset': ['rest_framework.permissions.AllowAny'],
-         'password_reset_confirm': ['rest_framework.permissions.AllowAny']
+         'password_reset_confirm': ['rest_framework.permissions.AllowAny'],
+    'EMAIL': {
+        'activation': 'djoser.email.ActivationEmail',
+        'confirmation': 'djoser.email.ConfirmationEmail',
+        'password_reset': 'djoser.email.PasswordResetEmail',
+        'password_changed_confirmation': 'djoser.email.PasswordChangedConfirmationEmail',
+        'username_changed_confirmation': 'djoser.email.UsernameChangedConfirmationEmail',
+        'username_reset': 'djoser.email.UsernameResetEmail',
+    }
 }
 
 # Internationalization
