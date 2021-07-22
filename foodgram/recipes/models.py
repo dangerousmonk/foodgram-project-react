@@ -46,7 +46,9 @@ class Tag(models.Model):
 
 class RecipeQuerySet(models.QuerySet):
     def with_tags_and_authors(self):
-        return self.select_related('author').prefetch_related('tags', 'ingredients')
+        return self.select_related('author').prefetch_related(
+            'tags', 'ingredients'
+        )
 
     def with_favorited(self, user):
         sub_qs = FavouriteRecipe.objects.filter(

@@ -45,10 +45,21 @@ class CustomUserViewSet(UserViewSet):
             }
             serializer = self.get_serializer(data=data)
             if not serializer.is_valid(raise_exception=True):
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                return Response(
+                    serializer.errors,
+                    status=status.HTTP_400_BAD_REQUEST
+                )
             serializer.save()
             headers = self.get_success_headers(serializer.data)
-            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-        instance = get_object_or_404(UserSubscription, subscriber=user, subscription=subscription)
+            return Response(
+                serializer.data,
+                status=status.HTTP_201_CREATED,
+                headers=headers
+            )
+        instance = get_object_or_404(
+            UserSubscription,
+            subscriber=user,
+            subscription=subscription
+        )
         instance.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

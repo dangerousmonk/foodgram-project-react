@@ -24,6 +24,14 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(v1_router.urls)),
     path('api/', include('djoser.urls')),
-    path('api/auth/token/login/', djoser_views.TokenCreateView.as_view(), name="login"),
-    path('api/auth/token/logout/', djoser_views.TokenDestroyView.as_view(), name="login"),
+    path(
+        'api/auth/token/login/',
+        djoser_views.TokenCreateView.as_view(),
+        name='login'
+    ),
+    path(
+        'api/auth/token/logout/',
+        djoser_views.TokenDestroyView.as_view(),
+        name='login'
+    ),
 ]

@@ -5,7 +5,6 @@ Common settings to share with both: production and development
 """
 import environ
 import os
-from datetime import timedelta
 from pathlib import Path
 
 env = environ.Env()
@@ -121,11 +120,11 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.AllowAny',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
-    'rest_framework.authentication.TokenAuthentication'
+        'rest_framework.authentication.TokenAuthentication'
     ],
-     'DEFAULT_FILTER_BACKENDS': [
+    'DEFAULT_FILTER_BACKENDS': [
         'django_filters.rest_framework.DjangoFilterBackend',
-     ],
+    ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 6,
     'DEFAULT_VERSIONING_CLASS':
@@ -135,7 +134,6 @@ REST_FRAMEWORK = {
 
 }
 
-
 DJOSER = {
     'PASSWORD_RESET_CONFIRM_URL': 'users/set_password/{uid}/{token}',
     'SEND_CONFIRMATION_EMAIL': True,
@@ -143,8 +141,8 @@ DJOSER = {
     'PERMISSIONS':
         {'user': ['djoser.permissions.CurrentUserOrAdminOrReadOnly'],
          'user_list': ['rest_framework.permissions.AllowAny']},
-         'password_reset': ['rest_framework.permissions.AllowAny'],
-         'password_reset_confirm': ['rest_framework.permissions.AllowAny'],
+    'password_reset': ['rest_framework.permissions.AllowAny'],
+    'password_reset_confirm': ['rest_framework.permissions.AllowAny'],
     'EMAIL': {
         'activation': 'djoser.email.ActivationEmail',
         'confirmation': 'djoser.email.ConfirmationEmail',
