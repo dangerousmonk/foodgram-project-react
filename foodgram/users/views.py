@@ -1,22 +1,19 @@
+from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets
+from django_filters import rest_framework as filters
 from djoser.views import UserViewSet
+from rest_framework import permissions
+from rest_framework import status
+from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework import status
-from rest_framework import permissions
-from django_filters import rest_framework as filters
 
-
-from .serializers import SubscriptionSerializer, SubscriptionWriteSerializer
 from .models import UserSubscription
-
-from django.contrib.auth import get_user_model
-
-User = get_user_model()
+from .serializers import SubscriptionSerializer
+from .serializers import SubscriptionWriteSerializer
 from .serializers import UserSerializer
 
-
+User = get_user_model()
 
 
 class SubscriptionViewSet(viewsets.ModelViewSet):
@@ -33,7 +30,6 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
 class CustomUserViewSet(UserViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-
 
     @action(detail=True, methods=['get', 'delete'],
             serializer_class=SubscriptionWriteSerializer,
@@ -52,7 +48,7 @@ class CustomUserViewSet(UserViewSet):
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
             serializer.save()
             headers = self.get_success_headers(serializer.data)
-            return Response(serializer.data,status=status.HTTP_201_CREATED,headers=headers)
+            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
         instance = get_object_or_404(UserSubscription, subscriber=user, subscription=subscription)
         instance.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

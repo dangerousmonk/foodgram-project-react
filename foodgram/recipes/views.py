@@ -1,23 +1,21 @@
 from django.contrib.auth import get_user_model
-from django_filters import rest_framework as filters
 from django.db.models import Sum
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets
-from rest_framework import mixins
-from rest_framework.response import Response
-from rest_framework.decorators import action
-from rest_framework import status
-from rest_framework import permissions
-User = get_user_model()
-
 from django.http import HttpResponse
+from django_filters import rest_framework as filters
+from rest_framework import mixins
+from rest_framework import permissions
+from rest_framework import status
+from rest_framework import viewsets
+from rest_framework.decorators import action
+from rest_framework.response import Response
 
 from .permissions import IsRecipeOwnerOrReadOnly
 from .filters import RecipeFilter
 from .models import Tag, Recipe, IngredientAmount, FavouriteRecipe
 from .serializers import TagSerializer, RecipeReadSerializer, IngredientAmountSerializer, RecipeWriteSerializer
-from foodgram.ingredients.models import Ingredient
 
+User = get_user_model()
 
 
 class TagViewSet(
@@ -36,6 +34,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             return Recipe.objects.all()
         user = get_object_or_404(User, id=self.request.user.id)
         return Recipe.recipe_objects.with_favorited_shopping_cart(user=user)
+
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = RecipeFilter
     permission_classes = [IsRecipeOwnerOrReadOnly]
@@ -84,7 +83,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 user=user, recipe=recipe,
                 defaults={'user': user, 'recipe': recipe, 'is_in_shopping_cart': True},
             )
-            return Response({'status': 'Рецепт успешно добавлен в список покупок'},status=status.HTTP_201_CREATED)
+            return Response({'status': 'Рецепт успешно добавлен в список покупок'}, status=status.HTTP_201_CREATED)
         else:
             fav_recipe = FavouriteRecipe.objects.get(recipe=recipe, user=user)
             if not fav_recipe.is_favorited:

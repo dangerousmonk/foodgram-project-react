@@ -4,7 +4,6 @@ from .models import UserSubscription
 from foodgram.recipes.models import Recipe
 from foodgram.recipes.serializers import RecipeFavoriteSerializer
 
-
 User = get_user_model()
 
 
@@ -36,7 +35,6 @@ class SubscriptionSerializer(serializers.ModelSerializer):
     first_name = serializers.EmailField(source='subscription.first_name')
     last_name = serializers.EmailField(source='subscription.last_name')
     is_subscribed = serializers.SerializerMethodField(read_only=True)
-    #recipes = RecipeFavoriteSerializer(many=True, source='subscription.recipes')
     recipes_count = serializers.SerializerMethodField(read_only=True)
     recipes = serializers.SerializerMethodField(read_only=True)
 
@@ -52,6 +50,7 @@ class SubscriptionSerializer(serializers.ModelSerializer):
             'recipes',
             'recipes_count'
         ]
+
     def get_is_subscribed(self, obj):
         user = self.context['request'].user
         if user.is_anonymous:
@@ -64,7 +63,6 @@ class SubscriptionSerializer(serializers.ModelSerializer):
     def get_recipes(self, obj):
         recipes = obj.subscription.recipes.all()[:3]
         return RecipeFavoriteSerializer(recipes, many=True).data
-
 
 
 class SubscriptionWriteSerializer(serializers.ModelSerializer):

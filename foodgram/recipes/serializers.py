@@ -1,13 +1,14 @@
-from django.core.files.base import ContentFile
 import base64, uuid
-from rest_framework import serializers
+from django.core.files.base import ContentFile
 from django.contrib.auth import get_user_model
-from foodgram.ingredients.models import Ingredient
+from rest_framework import serializers
 
+from foodgram.ingredients.models import Ingredient
 from foodgram.users.models import UserSubscription
-from .models import Tag, Recipe, IngredientAmount, FavouriteRecipe
+from .models import Tag, Recipe, IngredientAmount
 from .services import add_recipe_with_ingredients_tags
 from .services import update_recipe_with_ingredients_tags
+
 User = get_user_model()
 
 
@@ -68,7 +69,7 @@ class IngredientAmountSerializer(serializers.ModelSerializer):
 
 class RecipeReadSerializer(serializers.ModelSerializer):
     author = UserSerializer(read_only=True)
-    tags = TagSerializer(many=True,read_only=True)
+    tags = TagSerializer(many=True, read_only=True)
     ingredients = IngredientAmountSerializer(many=True, source='ingredient_amounts')
     is_favorited = serializers.BooleanField(read_only=True)
     is_in_shopping_cart = serializers.BooleanField(read_only=True)
@@ -114,7 +115,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         return instance
 
     def update(self, instance, validated_data):
-        updated_instance = update_recipe_with_ingredients_tags(validated_data,instance)
+        updated_instance = update_recipe_with_ingredients_tags(validated_data, instance)
         return updated_instance
 
     def to_representation(self, instance):
@@ -133,6 +134,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             'cooking_time',
             'is_favorited'
         ]
+
 
 class RecipeFavoriteSerializer(serializers.ModelSerializer):
     image = Base64ImageField()
