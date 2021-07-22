@@ -131,7 +131,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         data = ''
         for key, value in shopping_list.items():
             data += f'{key} - {value}\n'
-        return HttpResponse(data, content_type='csv')
+        return HttpResponse(data, content_type='text/plain')
 
 
 class IngredientAmountViewSet(viewsets.ModelViewSet):
