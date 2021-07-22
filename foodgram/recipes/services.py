@@ -21,7 +21,8 @@ def add_recipe_with_ingredients_tags(serialized_data):
             id=ingredient['id']
         )
         new_recipe.ingredients.add(
-            ingredient_object, through_defaults={'amount': ingredient['amount']}
+            ingredient_object,
+            through_defaults={'amount': ingredient['amount']}
         )
     new_recipe.save()
     return new_recipe

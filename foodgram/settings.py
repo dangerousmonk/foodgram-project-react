@@ -149,7 +149,7 @@ DJOSER = {
         'password_reset': 'djoser.email.PasswordResetEmail',
         'password_changed_confirmation': 'djoser.email.PasswordChangedConfirmationEmail',
         'username_changed_confirmation': 'djoser.email.UsernameChangedConfirmationEmail',
-        'username_reset': 'djoser.email.UsernameResetEmail',
+        'username_reset': 'djoser.email.UsernameResetEmail'
     }
 }
 
