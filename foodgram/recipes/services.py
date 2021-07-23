@@ -1,5 +1,6 @@
-from .models import Recipe, Tag
 from foodgram.ingredients.models import Ingredient
+
+from .models import Recipe, Tag
 
 
 def add_recipe_with_ingredients_tags(serialized_data):

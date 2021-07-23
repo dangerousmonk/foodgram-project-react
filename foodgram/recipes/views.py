@@ -1,22 +1,17 @@
 from django.contrib.auth import get_user_model
 from django.db.models import Sum
-from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
 from django_filters import rest_framework as filters
-from rest_framework import mixins
-from rest_framework import permissions
-from rest_framework import status
-from rest_framework import viewsets
+from rest_framework import mixins, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from .permissions import IsRecipeOwnerOrReadOnly
 from .filters import RecipeFilter
-from .models import Tag, Recipe, IngredientAmount, FavouriteRecipe
-from .serializers import TagSerializer
-from .serializers import RecipeReadSerializer
-from .serializers import IngredientAmountSerializer
-from .serializers import RecipeWriteSerializer
+from .models import FavouriteRecipe, IngredientAmount, Recipe, Tag
+from .permissions import IsRecipeOwnerOrReadOnly
+from .serializers import (IngredientAmountSerializer, RecipeReadSerializer,
+                          RecipeWriteSerializer, TagSerializer)
 
 User = get_user_model()
 

@@ -1,8 +1,7 @@
 import pytest
-from . import factories
 from django.contrib.auth import get_user_model
 
-
+from . import factories
 
 
 class TestUsers:

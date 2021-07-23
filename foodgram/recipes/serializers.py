@@ -1,14 +1,16 @@
 import base64
 import uuid
-from django.core.files.base import ContentFile
+
 from django.contrib.auth import get_user_model
+from django.core.files.base import ContentFile
 from rest_framework import serializers
 
 from foodgram.ingredients.models import Ingredient
 from foodgram.users.models import UserSubscription
-from .models import Tag, Recipe, IngredientAmount
-from .services import add_recipe_with_ingredients_tags
-from .services import update_recipe_with_ingredients_tags
+
+from .models import IngredientAmount, Recipe, Tag
+from .services import (add_recipe_with_ingredients_tags,
+                       update_recipe_with_ingredients_tags)
 
 User = get_user_model()
 

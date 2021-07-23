@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
 from foodgram.recipes.serializers import RecipeFavoriteSerializer
+
 from .models import UserSubscription
 
 User = get_user_model()

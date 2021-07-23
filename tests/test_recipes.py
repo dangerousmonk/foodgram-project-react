@@ -1,9 +1,12 @@
-import pytest
-from . import factories
-from foodgram.recipes.models import Recipe, FavouriteRecipe
 import random
-from django.test import override_settings
 import shutil
+
+import pytest
+from django.test import override_settings
+
+from foodgram.recipes.models import FavouriteRecipe, Recipe
+
+from . import factories
 
 TEMP_DIR = 'test_files'
 

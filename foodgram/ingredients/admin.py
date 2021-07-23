@@ -1,5 +1,6 @@
 from django.contrib.admin import ModelAdmin, register
-from .models import MeasurementUnit, Ingredient
+
+from .models import Ingredient, MeasurementUnit
 
 
 @register(Ingredient)

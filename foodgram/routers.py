@@ -1,8 +1,8 @@
 from rest_framework.routers import DefaultRouter
 
-from foodgram.recipes.views import TagViewSet, RecipeViewSet
 from foodgram.ingredients.views import IngredientViewSet
-from foodgram.users.views import SubscriptionViewSet, CustomUserViewSet
+from foodgram.recipes.views import RecipeViewSet, TagViewSet
+from foodgram.users.views import CustomUserViewSet, SubscriptionViewSet
 
 v1_router = DefaultRouter()
 v1_router.register(r'tags', TagViewSet, basename='tags')

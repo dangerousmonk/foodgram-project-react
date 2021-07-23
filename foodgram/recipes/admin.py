@@ -1,6 +1,7 @@
-from django.contrib.admin import ModelAdmin, register, site, display
-from .models import Tag, Recipe, FavouriteRecipe, IngredientAmount
+from django.contrib.admin import ModelAdmin, display, register, site
 from django.utils.translation import gettext_lazy as _
+
+from .models import FavouriteRecipe, IngredientAmount, Recipe, Tag
 
 site.register(IngredientAmount)
 site.register(FavouriteRecipe)

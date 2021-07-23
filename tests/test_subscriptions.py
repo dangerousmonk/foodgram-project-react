@@ -1,6 +1,8 @@
 import pytest
-from . import factories
+
 from foodgram.users.models import UserSubscription
+
+from . import factories
 
 
 class TestTags:
