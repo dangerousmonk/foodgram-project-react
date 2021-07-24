@@ -8,6 +8,7 @@ def admin(django_user_model):
         username='admin', email='admin@gmail.com', password='admin'
     )
 
+
 @pytest.fixture
 def test_user(django_user_model):
     return django_user_model.objects.create(
@@ -18,6 +19,7 @@ def test_user(django_user_model):
         last_name='Avilov'
     )
 
+
 @pytest.fixture
 def test_user2(django_user_model):
     return django_user_model.objects.create(
@@ -27,6 +29,7 @@ def test_user2(django_user_model):
         first_name='piter',
         last_name='parker'
     )
+
 
 @pytest.fixture
 def admin_client(admin):
@@ -44,6 +47,7 @@ def user_client(test_user):
     token, created = Token.objects.get_or_create(user=test_user)
     client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
     return client
+
 
 @pytest.fixture
 def user2_client(test_user2):

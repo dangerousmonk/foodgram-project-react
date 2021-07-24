@@ -10,10 +10,8 @@ class TestUsers:
     CURRENT_USER = '/api/users/me/'
     USERS_NUM = 8
 
-
-
     @pytest.mark.django_db(transaction=True)
-    def test_get_endpoint(self,client,user_client):
+    def test_get_endpoint(self, client, user_client):
         response = client.get(self.ENDPOINT)
         assert response.status_code != 404, f'Endpoint {self.ENDPOINT} doesnt exist'
         assert response.status_code == 200, f'Endpoint {self.ENDPOINT} available for un-authorized clients'
@@ -22,9 +20,8 @@ class TestUsers:
         assert response.status_code != 404, f'Endpoint {self.ENDPOINT} doesnt exist'
         assert response.status_code == 200, f'Endpoint {self.ENDPOINT} available for authorized clients'
 
-
     @pytest.mark.django_db(transaction=True)
-    def test_register_user(self,client):
+    def test_register_user(self, client):
         user = factories.UserFactory.build()
         data = {
             'username': user.username,
@@ -70,7 +67,6 @@ class TestUsers:
         response = client.post(self.ENDPOINT, data=data)
         assert response.status_code == 400, f'POST to {self.ENDPOINT} with invalid data must return 400'
 
-
     @pytest.mark.django_db(transaction=True)
     def test_users_endpoint_pagination(self, client):
         factories.UserFactory.create_batch(self.USERS_NUM)
@@ -86,7 +82,7 @@ class TestUsers:
             f'{self.ENDPOINT} returned incorrect number of user instances')
 
     @pytest.mark.django_db(transaction=True)
-    def test_user_profile(self, client,user_client):
+    def test_user_profile(self, client, user_client):
         user = factories.UserFactory.create()
         response = client.get(f'{self.ENDPOINT}{user.id}/')
         assert response.status_code != 404, (
@@ -98,7 +94,7 @@ class TestUsers:
         assert response.status_code == 200, 'User profile available for authorized clients'
 
     @pytest.mark.django_db(transaction=True)
-    def test_current_user(self, client, user_client,test_user):
+    def test_current_user(self, client, user_client, test_user):
         user = factories.UserFactory.create()
         response = client.get(self.CURRENT_USER)
         assert response.status_code != 404, (
@@ -128,12 +124,3 @@ class TestUsers:
         assert response_data.get('id') == test_user.id, (
             f'{self.CURRENT_USER} returned incorrect id'
         )
-
-
-
-
-
-
-
-
-
