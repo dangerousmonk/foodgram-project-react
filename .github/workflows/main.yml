@@ -50,7 +50,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/foodgram:v1.1
+          tags: ${{ secrets.DOCKER_USERNAME }}/foodgram:latest
   deploy:
     runs-on: ubuntu-latest
     needs: build_and_push_to_docker_hub
