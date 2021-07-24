@@ -8,13 +8,13 @@
 
 ```bash
 git clone https://github.com/dangerousmonk/gfoodgram-project-react
-cd infra_sp2
+cd foodgram-project-react
 ```
 - Установить Python 3.9. в случае если он не установлен
 - Установить Docker
 
 ```
-docker pull dangerousmonk/foodgram-project-react:v1.1
+docker pull dangerousmonk/foodgram-project-react:latest
 ```
 
 
