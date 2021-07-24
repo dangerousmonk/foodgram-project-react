@@ -64,6 +64,7 @@ jobs:
           passphrase: ${{ secrets.PASSPHRASE }}
           stack_file_name: docker-compose.yaml
           script: |
+            cd ${{ github.event.repository.name }}
             sudo docker pull ${{ secrets.USER }}/foodgram
             sudo docker-compose stop
             sudo docker-compose rm backend
