@@ -19,7 +19,7 @@ jobs:
         pip install flake8 pep8-naming flake8-broken-line flake8-return flake8-isort
         pip install -r requirements.txt
 
-    - name: Test with flake8 and  pytests
+    - name: Test with flake8 and  pytest
       env:
         SECRET_KEY: ${{ secrets.SECRET_KEY }}
         DB_ENGINE: ${{ secrets.DB_ENGINE }}
@@ -29,6 +29,7 @@ jobs:
         POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
         DB_PORT: ${{ secrets.DB_PORT }}
       run: |
+        flake8 .
         pytest
   build_and_push_to_docker_hub:
     name: Push Docker image to Docker Hub
