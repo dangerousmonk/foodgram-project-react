@@ -12,23 +12,23 @@ class MeasurementUnit(models.Model):
 
     name = models.CharField(
         max_length=255,
-        blank=False,
-        null=False,
         verbose_name=_('name'),
     )
     metric = models.CharField(
         max_length=255,
-        blank=False,
-        null=False,
         choices=Metrics.choices,
         verbose_name=_('metric'),
     )
 
     class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['name', 'metric'], name='unique_measurement_metric'
+            )
+        ]
         verbose_name = _('Measurement unit')
         verbose_name_plural = _('Measurement units')
         ordering = ['metric', 'name']
-        unique_together = ['name', 'metric']
 
     def __str__(self):
         return self.name
@@ -37,8 +37,6 @@ class MeasurementUnit(models.Model):
 class Ingredient(models.Model):
     name = models.CharField(
         max_length=255,
-        blank=False,
-        null=False,
         unique=True,
         verbose_name=_('name'),
         db_index=True,
@@ -51,10 +49,15 @@ class Ingredient(models.Model):
     )
 
     class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['name', 'measurement_unit'],
+                name='unique_ingredient_unit',
+            )
+        ]
         verbose_name = _('Ingredient')
         verbose_name_plural = _('Ingredients')
         ordering = ['name', 'measurement_unit', ]
-        unique_together = ['name', 'measurement_unit']
 
     def __str__(self):
         return self.name

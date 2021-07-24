@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.urls import include, path
+
 from djoser import views as djoser_views
 
 from foodgram.routers import v1_router

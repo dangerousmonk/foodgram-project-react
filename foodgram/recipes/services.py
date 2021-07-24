@@ -1,3 +1,5 @@
+from django.shortcuts import get_object_or_404
+
 from foodgram.ingredients.models import Ingredient
 
 from .models import Recipe, Tag
@@ -13,17 +15,19 @@ def add_recipe_with_ingredients_tags(serialized_data):
     ingredients_data = serialized_data.pop('ingredients')
     new_recipe = Recipe.objects.create(**serialized_data)
     tags = []
+
     for tag in tags_data:
-        tag_object = Tag.objects.get(id=tag.id)
+        tag_object = get_object_or_404(Tag, id=tag.id)
         tags.append(tag_object)
     new_recipe.tags.add(*tags)
+
     for ingredient in ingredients_data:
-        ingredient_object = Ingredient.objects.get(
-            id=ingredient['id']
+        ingredient_object = get_object_or_404(
+            Ingredient, id=ingredient.get('id')
         )
         new_recipe.ingredients.add(
             ingredient_object,
-            through_defaults={'amount': ingredient['amount']}
+            through_defaults={'amount': ingredient.get('amount')}
         )
     new_recipe.save()
     return new_recipe
@@ -41,8 +45,12 @@ def update_recipe_with_ingredients_tags(serialized_data, recipe_instance):
     recipe_instance.tags.clear()
     recipe_instance.ingredients.clear()
     recipe_instance.tags.add(*tags_data)
+
     for ingredient in ingredients_data:
-        ingredient_object = Ingredient.objects.get(id=ingredient['id'])
+        ingredient_object = get_object_or_404(
+            Ingredient,
+            id=ingredient.get('id')
+        )
         recipe_instance.ingredients.add(
             ingredient_object,
             through_defaults={'amount': ingredient.get('amount')}

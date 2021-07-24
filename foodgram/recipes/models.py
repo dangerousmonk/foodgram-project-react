@@ -10,23 +10,17 @@ from .utils import unique_slugify
 class Tag(models.Model):
     name = models.CharField(
         max_length=200,
-        null=False,
-        blank=False,
         unique=True,
         verbose_name=_('name'),
     )
     color = models.CharField(
         max_length=32,
-        null=False,
-        blank=False,
         default='#E26C2D',
         unique=True,
         verbose_name=_('color'),
     )
     slug = models.SlugField(
         max_length=255,
-        blank=False,
-        null=False,
         editable=False,
         verbose_name=_('slug'),
     )
@@ -81,20 +75,14 @@ class Recipe(models.Model):
     )
     name = models.CharField(
         max_length=200,
-        blank=False,
-        null=False,
         verbose_name=_('name'),
     )
     image = models.ImageField(
         verbose_name=_('image'),
         help_text=_('select image to upload'),
-        null=False,
-        blank=False,
         upload_to='recipes/',
     )
     text = models.TextField(
-        null=False,
-        blank=False,
         verbose_name=_('description'),
     )
     tags = models.ManyToManyField(
@@ -109,14 +97,10 @@ class Recipe(models.Model):
         verbose_name=_('ingredients'),
     )
     cooking_time = models.PositiveSmallIntegerField(
-        null=False,
-        blank=False,
         validators=[MinValueValidator(1)],
         verbose_name=_('cooking time'),
     )
     created_date = models.DateTimeField(
-        null=False,
-        blank=False,
         auto_now_add=True,
         verbose_name=_('created date'),
     )
@@ -124,10 +108,15 @@ class Recipe(models.Model):
     recipe_objects = RecipeQuerySet.as_manager()
 
     class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['author', 'name'],
+                name='unique_recipe_author',
+            )
+        ]
         verbose_name = _('Recipe')
         verbose_name_plural = _('Recipes')
         ordering = ['-created_date']
-        unique_together = ['author', 'name']
 
     def __str__(self):
         return self.name
@@ -151,17 +140,20 @@ class IngredientAmount(models.Model):
         verbose_name=_('ingredient')
     )
     amount = models.PositiveSmallIntegerField(
-        null=False,
-        blank=False,
         validators=[MinValueValidator(1)],
         verbose_name=_('ingredient amount')
     )
 
     class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['recipe', 'ingredient'],
+                name='unique_recipe_ingredient',
+            )
+        ]
         verbose_name = _('Ingredient amount')
         verbose_name_plural = _('Ingredient amounts')
         ordering = ['id']
-        unique_together = ['recipe', 'ingredient']
 
     def __str__(self):
         return f'{self.recipe.name} - {self.ingredient.name}'
@@ -181,35 +173,32 @@ class FavouriteRecipe(models.Model):
         verbose_name=_('recipe'),
     )
     is_in_shopping_cart = models.BooleanField(
-        null=False,
-        blank=True,
         default=False,
         verbose_name=_('is in shopping cart')
     )
     is_favorited = models.BooleanField(
-        null=False,
-        blank=True,
         default=False,
         verbose_name=_('is in favorites')
     )
     added_to_favorites = models.DateTimeField(
-        null=False,
-        blank=True,
         auto_now_add=True,
         verbose_name=_('added at')
     )
     added_to_shopping_cart = models.DateTimeField(
-        null=False,
-        blank=True,
         auto_now_add=True,
         verbose_name=_('added at')
     )
 
     class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'recipe'],
+                name='unique_favorite_recipe',
+            )
+        ]
         verbose_name = _('Favorites')
         verbose_name_plural = _('Favorites')
         ordering = ['-added_to_favorites', '-added_to_shopping_cart']
-        unique_together = ['user', 'recipe']
 
     def __str__(self):
         return f'{self.user.username} - {self.recipe.name}'

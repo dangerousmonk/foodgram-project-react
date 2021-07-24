@@ -1,8 +1,9 @@
 import random
 import shutil
 
-import pytest
 from django.test import override_settings
+
+import pytest
 
 from foodgram.recipes.models import FavouriteRecipe, Recipe
 

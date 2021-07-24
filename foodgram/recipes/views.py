@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
+
 from django_filters import rest_framework as filters
 from rest_framework import mixins, permissions, status, viewsets
 from rest_framework.decorators import action
@@ -27,15 +28,15 @@ class TagViewSet(
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
+    filter_backends = (filters.DjangoFilterBackend,)
+    filterset_class = RecipeFilter
+    permission_classes = [IsRecipeOwnerOrReadOnly]
+
     def get_queryset(self):
         if not self.request.user.is_authenticated:
             return Recipe.objects.all()
         user = get_object_or_404(User, id=self.request.user.id)
         return Recipe.recipe_objects.with_favorited_shopping_cart(user=user)
-
-    filter_backends = (filters.DjangoFilterBackend,)
-    filterset_class = RecipeFilter
-    permission_classes = [IsRecipeOwnerOrReadOnly]
 
     def get_serializer_class(self):
         if self.request.method in ['PUT', 'POST', 'PATCH']:
@@ -80,6 +81,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def shopping_cart(self, request, pk=None):
         user = self.request.user
         recipe = self.get_object()
+
         if request.method == 'GET':
             FavouriteRecipe.objects.update_or_create(
                 user=user,
@@ -95,7 +97,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
             )
 
         else:
-            fav_recipe = FavouriteRecipe.objects.get(recipe=recipe, user=user)
+            fav_recipe = get_object_or_404(
+                FavouriteRecipe,
+                recipe=recipe,
+                user=user
+            )
             if not fav_recipe.is_favorited:
                 fav_recipe.delete()
             else:
@@ -118,8 +124,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
         )
         shopping_list = {}
         for item in ingredients:
-            title = item['ingredients__name']
-            count = str(item['ingredients_total']) + ' ' + item[
+            title = item.get('ingredients__name')
+            count = str(item.get('ingredients_total')) + ' ' + item[
                 'ingredients__measurement_unit__name'
             ]
             shopping_list[title] = count

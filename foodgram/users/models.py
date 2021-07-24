@@ -47,17 +47,20 @@ class UserSubscription(models.Model):
         on_delete=models.CASCADE
     )
     subscribed_at = models.DateTimeField(
-        null=False,
-        blank=False,
         auto_now_add=True,
         verbose_name=_('subscription date')
     )
 
     class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['subscriber', 'subscription'],
+                name='unique_subscription',
+            )
+        ]
         verbose_name = _('Subscription')
         verbose_name_plural = _('Subscriptions')
         ordering = ['-subscribed_at', 'id']
-        unique_together = ['subscriber', 'subscription']
 
     def __str__(self):
         return f'{self.subscriber} - {self.subscription}'

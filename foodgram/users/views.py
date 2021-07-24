@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
+
 from django_filters import rest_framework as filters
 from djoser.views import UserViewSet
 from rest_framework import permissions, status, viewsets
@@ -41,11 +42,7 @@ class CustomUserViewSet(UserViewSet):
                 'subscription': subscription.id
             }
             serializer = self.get_serializer(data=data)
-            if not serializer.is_valid(raise_exception=True):
-                return Response(
-                    serializer.errors,
-                    status=status.HTTP_400_BAD_REQUEST
-                )
+            serializer.is_valid(raise_exception=True)
             serializer.save()
             headers = self.get_success_headers(serializer.data)
             return Response(
