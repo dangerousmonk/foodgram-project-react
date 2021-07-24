@@ -1,3 +1,4 @@
+![CI workflow](https://github.com/dangerousmonk/foodgram-project-react/actions/workflows/main.yml/badge.svg)
 # Foodgram - сервис для публикации рецептов
 ## Доступен по адресу: http://dangerousmonk.hopto.org/
 

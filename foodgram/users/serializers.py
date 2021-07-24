@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
 
@@ -83,4 +84,6 @@ class SubscriptionWriteSerializer(serializers.ModelSerializer):
         request = self.context['request']
         if not request.user == value:
             return value
-        raise serializers.ValidationError('User cant subscribe for himself')
+        raise serializers.ValidationError(
+            _('Вы не можете подписаться на себя')
+        )

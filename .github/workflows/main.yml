@@ -31,6 +31,9 @@ jobs:
       run: |
         flake8 .
         pytest
+        coverage run --source='foodgram' -m pytest
+    - name: Code coverage
+      uses: codecov/codecov-action@v1
   build_and_push_to_docker_hub:
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest

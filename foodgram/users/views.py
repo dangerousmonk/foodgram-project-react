@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
+from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as filters
 from djoser.views import UserViewSet
@@ -36,7 +37,17 @@ class CustomUserViewSet(UserViewSet):
     def subscribe(self, request, id=None):
         user = self.request.user
         subscription = self.get_object()
+
         if request.method == 'GET':
+
+            if UserSubscription.objects.filter(
+                    subscriber=user,
+                    subscription=subscription).exists():
+                return Response(
+                    _('Вы уже подписаны на этого автора'),
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
             data = {
                 'subscriber': user.id,
                 'subscription': subscription.id
@@ -50,6 +61,7 @@ class CustomUserViewSet(UserViewSet):
                 status=status.HTTP_201_CREATED,
                 headers=headers
             )
+
         instance = get_object_or_404(
             UserSubscription,
             subscriber=user,
