@@ -129,20 +129,13 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
     is_favorited = serializers.BooleanField(read_only=True)
 
     def create(self, validated_data):
-        instance = add_recipe_with_ingredients_tags(validated_data)
-        return instance
+        return add_recipe_with_ingredients_tags(validated_data)
 
     def update(self, instance, validated_data):
-        updated_instance = update_recipe_with_ingredients_tags(
-            validated_data,
-            instance)
-        return updated_instance
+        return update_recipe_with_ingredients_tags(validated_data, instance)
 
     def to_representation(self, instance):
-        serializer_data = RecipeReadSerializer(
-            instance, context=self.context
-        ).data
-        return serializer_data
+        return RecipeReadSerializer(instance, context=self.context).data
 
     class Meta:
         model = Recipe

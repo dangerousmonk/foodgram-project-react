@@ -39,9 +39,11 @@ class RecipeAdmin(ModelAdmin):
         qs = obj.list_tags()
         if qs:
             return list(qs)
+        return None
 
     @display(description=_('Added to favorites,number'))
     def get_favorites(self, obj):
         qs = obj.in_favourites.count()
         if qs:
             return qs
+        return None

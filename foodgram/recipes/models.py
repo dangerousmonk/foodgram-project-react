@@ -68,9 +68,7 @@ class RecipeQuerySet(models.QuerySet):
         return self.annotate(is_in_shopping_cart=Exists(sub_qs))
 
     def with_favorited_shopping_cart(self, user):
-        qs = self.with_favorited(user=user)
-        qs = qs.with_shopping_cart(user=user)
-        return qs
+        return self.with_favorited(user=user).with_shopping_cart(user=user)
 
 
 class Recipe(models.Model):
