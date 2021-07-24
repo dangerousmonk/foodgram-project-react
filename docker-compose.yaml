@@ -16,7 +16,7 @@ services:
     depends_on:
       - db
   backend:
-    image: dangerousmonk/foodgram:v1.1
+    image: dangerousmonk/foodgram:latest
     restart: always
     volumes:
       - static_value:/code/static/
