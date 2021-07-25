@@ -2,6 +2,16 @@
 # Foodgram - сервис для публикации рецептов
 ## Доступен по адресу: http://dangerousmonk.hopto.org/
 
+- Пользователь для доступа в административную часть
+- Обычный пользователь
+```bash
+admin@gmail.com - логин
+admin12345 - пароль
+
+piterparker@gmail.com - логин
+piter12345 - пароль
+```
+
 
 ## Запуск проекта для отладки
 - Склонировать проект и перейти в папку проекта
@@ -58,14 +68,4 @@ docker-compose exec backend python manage.py collectstatic --noinput
 
 ```bash
 docker-compose exec backend python manage.py createsuperuser
-```
-
-- Пользователь для доступа в административную часть
-- Второй пользователь
-```bash
-admin@gmail.com
-admin12345
-
-piterparker@gmail.com
-piter12345
 ```
