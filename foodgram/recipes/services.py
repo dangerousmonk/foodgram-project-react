@@ -1,4 +1,7 @@
 from django.shortcuts import get_object_or_404
+from django.utils.translation import gettext_lazy as _
+
+from rest_framework import exceptions
 
 from foodgram.ingredients.models import Ingredient
 
@@ -11,9 +14,28 @@ def add_recipe_with_ingredients_tags(serialized_data):
     :param serialized_data: dict with cleaned data.
     :return: new Recipe object.
     """
+    author = serialized_data.get('author')
+    name = serialized_data.get('name')
+    if Recipe.objects.filter(author=author, name=name).exists():
+        raise exceptions.ValidationError(
+            _('Вы уже публиковали рецепт с таким названием')
+        )
+
     tags_data = serialized_data.pop('tags')
     ingredients_data = serialized_data.pop('ingredients')
+    unique_ingredients = set()
+    for ingredient in ingredients_data:
+        if ingredient.get('amount') <= 0:
+            raise exceptions.ValidationError(
+                _('Количество ингредиентов должно быть больше нуля')
+            )
+        if ingredient['id'] in unique_ingredients:
+            raise exceptions.ValidationError(
+                _('Ингредиенты в рецепте не должны повторяться')
+            )
+        unique_ingredients.add(ingredient['id'])
     new_recipe = Recipe.objects.create(**serialized_data)
+
     tags = []
 
     for tag in tags_data:
@@ -40,8 +62,28 @@ def update_recipe_with_ingredients_tags(serialized_data, recipe_instance):
     :param recipe_instance: Recipe object to update
     :return: updated Recipe object
     """
+    author = serialized_data.get('author')
+    name = serialized_data.get('name')
+    if Recipe.objects.filter(author=author, name=name).exists():
+        raise exceptions.ValidationError(
+            _('Вы уже публиковали рецепт с таким названием')
+        )
+
     tags_data = serialized_data.pop('tags')
     ingredients_data = serialized_data.pop('ingredients')
+    unique_ingredients = set()
+
+    for ingredient in ingredients_data:
+        if ingredient.get('amount') <= 0:
+            raise exceptions.ValidationError(
+                _('Количество ингредиентов должно быть больше нуля')
+            )
+        if ingredient['id'] in unique_ingredients:
+            raise exceptions.ValidationError(
+                _('Ингредиенты в рецепте не должны повторяться')
+            )
+        unique_ingredients.add(ingredient['id'])
+
     recipe_instance.tags.clear()
     recipe_instance.ingredients.clear()
     recipe_instance.tags.add(*tags_data)
