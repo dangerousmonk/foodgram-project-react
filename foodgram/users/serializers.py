@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 
+from djoser.serializers import UserCreateSerializer
 from rest_framework import serializers
 
 from foodgram.recipes.serializers import RecipeFavoriteSerializer
@@ -10,7 +11,7 @@ from .models import UserSubscription
 User = get_user_model()
 
 
-class UserSerializer(serializers.ModelSerializer):
+class UserSerializer(UserCreateSerializer):
     is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
@@ -22,6 +23,7 @@ class UserSerializer(serializers.ModelSerializer):
             'first_name',
             'last_name',
             'is_subscribed',
+            'password'
         ]
 
     def get_is_subscribed(self, obj):

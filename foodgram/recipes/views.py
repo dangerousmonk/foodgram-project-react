@@ -10,6 +10,7 @@ from rest_framework.response import Response
 
 from .filters import RecipeFilter
 from .models import FavouriteRecipe, IngredientAmount, Recipe, Tag
+from .paginators import CustomPageNumberPaginator
 from .permissions import IsRecipeOwnerOrReadOnly
 from .serializers import (IngredientAmountSerializer, RecipeReadSerializer,
                           RecipeWriteSerializer, TagSerializer)
@@ -31,6 +32,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = RecipeFilter
     permission_classes = [IsRecipeOwnerOrReadOnly]
+    pagination_class = CustomPageNumberPaginator
 
     def get_queryset(self):
         if not self.request.user.is_authenticated:
