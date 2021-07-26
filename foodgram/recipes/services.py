@@ -62,13 +62,6 @@ def update_recipe_with_ingredients_tags(serialized_data, recipe_instance):
     :param recipe_instance: Recipe object to update
     :return: updated Recipe object
     """
-    author = serialized_data.get('author')
-    name = serialized_data.get('name')
-    if Recipe.objects.filter(author=author, name=name).exists():
-        raise exceptions.ValidationError(
-            _('Вы уже публиковали рецепт с таким названием')
-        )
-
     tags_data = serialized_data.pop('tags')
     ingredients_data = serialized_data.pop('ingredients')
     unique_ingredients = set()
