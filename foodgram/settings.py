@@ -7,7 +7,6 @@ import environ
 env = environ.Env()
 environ.Env.read_env()
 
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -17,7 +16,6 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 DEBUG = env.bool('DEBUG', False)
 
 ALLOWED_HOSTS = ['dangerousmonk.hopto.org', '130.193.52.60']
-
 
 DJANGO_APPS = [
     'django.contrib.admin',
@@ -78,7 +76,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'foodgram.wsgi.application'
 
-
 DATABASES = {
     'default': {
         'ENGINE': os.environ.get('DB_ENGINE'),
@@ -91,7 +88,6 @@ DATABASES = {
 }
 
 AUTH_USER_MODEL = 'users.User'
-
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -129,15 +125,17 @@ REST_FRAMEWORK = {
 
 DJOSER = {
     'PASSWORD_RESET_CONFIRM_URL': 'users/set_password/{uid}/{token}',
-    'SEND_CONFIRMATION_EMAIL': True,
     'HIDE_USERS': False,
     'PERMISSIONS':
         {'user': ['djoser.permissions.CurrentUserOrAdminOrReadOnly'],
          'user_list': ['rest_framework.permissions.AllowAny']},
     'password_reset': ['rest_framework.permissions.AllowAny'],
     'password_reset_confirm': ['rest_framework.permissions.AllowAny'],
+    'SERIALIZERS': {'user_create': 'foodgram.users.serializers.UserSerializer',
+                    'user': 'foodgram.users.serializers.UserSerializer',
+                    'current_user': 'foodgram.users.serializers.UserSerializer',
+                    },
 }
-
 
 LANGUAGE_CODE = 'ru-ru'
 
@@ -149,13 +147,11 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
