@@ -80,7 +80,7 @@ jobs:
             echo DB_HOST=${{ secrets.DB_HOST }} >> .env
             echo DB_PORT=${{ secrets.DB_PORT }} >> .env
             echo POSTGRES_DB=${{ secrets.POSTGRES_DB }} >> .env
-            sudo docker-compose up -d
+            sudo docker-compose up -d --build
             sudo docker-compose exec -T backend python manage.py makemigrations --noinput
             sudo docker-compose exec -T backend python manage.py migrate --noinput
             sudo docker-compose exec -T backend python manage.py collectstatic --no-input
