@@ -132,6 +132,10 @@ DJOSER = {
          'user_list': ['rest_framework.permissions.AllowAny']},
     'password_reset': ['rest_framework.permissions.AllowAny'],
     'password_reset_confirm': ['rest_framework.permissions.AllowAny'],
+    'SERIALIZERS': {'user_create': 'foodgram.users.serializers.UserSerializer',
+                    'user': 'foodgram.users.serializers.UserSerializer',
+                    'current_user': 'foodgram.users.serializers.UserSerializer',
+                    },
 }
 
 LANGUAGE_CODE = 'ru-ru'

@@ -23,7 +23,11 @@ class UserSerializer(UserCreateSerializer):
             'first_name',
             'last_name',
             'is_subscribed',
+            'password'
         ]
+        extra_kwargs = {
+            'password': {'write_only': True}
+        }
 
     def get_is_subscribed(self, obj):
         user = self.context['request'].user
@@ -87,12 +91,4 @@ class SubscriptionWriteSerializer(serializers.ModelSerializer):
             return value
         raise serializers.ValidationError(
             _('Вы не можете подписаться на себя')
-        )
-
-
-class CustomUserCreateSerializer(UserCreateSerializer):
-    class Meta(UserCreateSerializer.Meta):
-        model = User
-        fields = (
-            'id', 'email', 'username', 'password', 'first_name', 'last_name'
         )
