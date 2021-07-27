@@ -89,8 +89,8 @@ class SubscriptionWriteSerializer(serializers.ModelSerializer):
             _('Вы не можете подписаться на себя')
         )
 
-class CustomUserCreateSerializer(UserCreateSerializer):
 
+class CustomUserCreateSerializer(UserCreateSerializer):
     class Meta(UserCreateSerializer.Meta):
         model = User
         fields = (
