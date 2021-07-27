@@ -114,7 +114,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 fav_recipe.save()
             return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @action(detail=False, methods=['get', 'delete'])
+    @action(detail=False, methods=['get', 'delete'],
+            permission_classes=[permissions.IsAuthenticated])
     def download_shopping_cart(self, request, pk=None):
         user = self.request.user
         recipes = Recipe.objects.filter(
