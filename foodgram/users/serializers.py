@@ -88,3 +88,11 @@ class SubscriptionWriteSerializer(serializers.ModelSerializer):
         raise serializers.ValidationError(
             _('Вы не можете подписаться на себя')
         )
+
+class CustomUserCreateSerializer(UserCreateSerializer):
+
+    class Meta(UserCreateSerializer.Meta):
+        model = User
+        fields = (
+            'id', 'email', 'username', 'password', 'first_name', 'last_name'
+        )
