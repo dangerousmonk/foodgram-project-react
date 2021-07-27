@@ -25,10 +25,6 @@ def add_recipe_with_ingredients_tags(serialized_data):
     ingredients_data = serialized_data.pop('ingredients')
     unique_ingredients = set()
     for ingredient in ingredients_data:
-        if ingredient.get('amount') <= 0:
-            raise exceptions.ValidationError(
-                _('Количество ингредиентов должно быть больше нуля')
-            )
         if ingredient['id'] in unique_ingredients:
             raise exceptions.ValidationError(
                 _('Ингредиенты в рецепте не должны повторяться')
