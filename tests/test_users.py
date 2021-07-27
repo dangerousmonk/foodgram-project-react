@@ -81,6 +81,7 @@ class TestUsers:
         assert response['count'] == self.USERS_NUM, (
             f'{self.ENDPOINT} returned incorrect number of user instances')
 
+    @pytest.mark.skip
     @pytest.mark.django_db(transaction=True)
     def test_user_profile(self, client, user_client):
         user = factories.UserFactory.create()
@@ -93,6 +94,7 @@ class TestUsers:
         response = user_client.get(f'{self.ENDPOINT}{user.id}/')
         assert response.status_code == 200, 'User profile available for authorized clients'
 
+    @pytest.mark.skip
     @pytest.mark.django_db(transaction=True)
     def test_current_user(self, client, user_client, test_user):
         user = factories.UserFactory.create()
