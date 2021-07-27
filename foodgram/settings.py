@@ -134,7 +134,6 @@ DJOSER = {
     'password_reset_confirm': ['rest_framework.permissions.AllowAny'],
     'SERIALIZERS': {'user_create': 'foodgram.users.serializers.UserSerializer',
                     'user': 'foodgram.users.serializers.UserSerializer',
-                    'current_user': 'foodgram.users.serializers.UserSerializer',
                     },
 }
 
