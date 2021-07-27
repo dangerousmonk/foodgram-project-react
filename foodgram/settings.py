@@ -13,7 +13,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-#DEBUG = env.bool('DEBUG', False)
+# DEBUG = env.bool('DEBUG', False)
 DEBUG = True
 
 ALLOWED_HOSTS = ['dangerousmonk.hopto.org', '130.193.52.60']
