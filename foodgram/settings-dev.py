@@ -10,7 +10,7 @@ DATABASES = {
     }
 }
 SECRET_KEY = env.str('SECRET_KEY')
-STATICFILES_DIRS = (base_dir_join("./frontend/build/static"),)
+STATICFILES_DIRS = (base_dir_join('./frontend/build/static'),)
 
 TEMPLATES = [
     {

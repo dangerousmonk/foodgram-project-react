@@ -9,14 +9,17 @@ environ.Env.read_env()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# SECURITY WARNING: keep the secret key used in production secret!
+
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
-# SECURITY WARNING: don't run with debug turned on in production!
+
 DEBUG = env.bool('DEBUG', False)
 
-ALLOWED_HOSTS = ['dangerousmonk.hopto.org', '130.193.52.60']
 
+ALLOWED_HOSTS = ['dangerousmonk.hopto.org', '130.193.52.60']
+INTERNAL_IPS = [
+    '127.0.0.1',
+]
 DJANGO_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -61,7 +64,7 @@ ROOT_URLCONF = 'foodgram.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [[os.path.join(BASE_DIR, 'frontend')]],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -159,8 +162,8 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-MEDIA_URL = "/media/"
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
